@@ -13,7 +13,7 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Building } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Target } from "lucide-react";
 
 import { columns } from "./columns";
 import { Nursery } from "./types";
@@ -41,19 +41,43 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 const data: Nursery[] = [
   {
     id: "1",
-    kode: "AGAM",
-    nama: "BPDAS AGAM",
+    bpdas: "BPDAS CITARUM",
+    das: "string",
+    spas_id: "SPAS12345",
+    tipe_spas: "string",
+    frekuensi_pengiriman: "string",
+    kanal_data: "string",
+    status: "Belum Dimulai",
+    keterangan: "string",
     provinsi: "string",
     kabupaten: "string",
     kecamatan: "string",
-    desa: "string",
-    alamat: "string",
-    telepon: "string",
-    status: "aktif",
+    kelurahan: "string",
+    alamat: "CIPAYAR, BANDUNG, JAWA BARAT",
+    lintang: "string",
+    bujur: "string",
+  },
+  {
+    id: "2",
+    bpdas: "BPDAS CITARUM",
+    das: "string",
+    spas_id: "SPAS12345",
+    tipe_spas: "string",
+    frekuensi_pengiriman: "string",
+    kanal_data: "string",
+    status: "Berjalan",
+    keterangan: "string",
+    provinsi: "string",
+    kabupaten: "string",
+    kecamatan: "string",
+    kelurahan: "string",
+    alamat: "CIPAYAR, BANDUNG, JAWA BARAT",
+    lintang: "string",
+    bujur: "string",
   },
 ];
 
-export default function Bpdas() {
+export default function Spas() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -103,14 +127,14 @@ export default function Bpdas() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[{ label: "Organisasi", href: "" }, { label: "BPDAS" }]} />
+              <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "SPASS" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <Building />
-                <h1 className="text-2xl font-bold ">BPDAS</h1>
+                <Target />
+                <h1 className="text-2xl font-bold ">SPAS / ARR</h1>
               </div>
-              <p className="text-sm text-base-gray">Informasi terkait data BPDAS</p>
+              <p className="text-sm text-base-gray">Informasi terkait data SPASS</p>
             </div>
-            <Link href="bpdas/create">
+            <Link href="spas/create">
               <Button variant="green">
                 <Plus />
                 Tambah Data
