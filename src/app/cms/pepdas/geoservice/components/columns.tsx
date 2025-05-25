@@ -1,45 +1,36 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Nursery } from "./types";
-import { ArrowUpDown, MoreHorizontal, PencilIcon, InfoIcon, Trash2Icon } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, PencilIcon, InfoIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Dokumen } from "@/model/rh/Dokumen";
+import Delete from "./delete";
+import { mutate } from "swr";
+import { Geoservice } from "@/model/pepdas/Geoservice";
 
-export const columns: ColumnDef<Nursery>[] = [
+export const columns: ColumnDef<Geoservice>[] = [
   {
     id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
+    header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected()} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
     cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        ID <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "No",
+    id: "rowNumber",
+    enableSorting: false,
+    cell: ({ row, table }) => {
+      const pageIndex = table.getState().pagination.pageIndex;
+      const pageSize = table.getState().pagination.pageSize;
+      const sortedRows = table.getSortedRowModel().rows;
+      const indexInSortedData = sortedRows.findIndex((r) => r.id === row.id);
+      const globalIndex = pageIndex * pageSize + indexInSortedData + 1;
+      return <span>{globalIndex}</span>;
+    },
   },
   {
     accessorKey: "bpdas",
@@ -58,7 +49,7 @@ export const columns: ColumnDef<Nursery>[] = [
     ),
   },
   {
-    accessorKey: "geoservice",
+    accessorKey: "geoserviceId",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         GEOSERVICE ID
@@ -101,16 +92,16 @@ export const columns: ColumnDef<Nursery>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
+      const rawStatus = row.getValue("status");
+      const status = typeof rawStatus === "string" ? rawStatus : "Draft";
 
       type StatusType = "Aktif" | "Nonaktif";
 
-      const statusColor: Record<StatusType, string> = {
+      const statusColor: Record<"Aktif" | "Nonaktif", string> = {
         Aktif: "bg-secondary-green text-white",
         Nonaktif: "bg-base-destructive text-white",
       };
 
-      // Pastikan status cocok dengan StatusType, jika tidak fallback
       const color = statusColor[status as StatusType] ?? "bg-gray-300 text-gray-800";
 
       return <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${color}`}>{status}</span>;
@@ -141,30 +132,7 @@ export const columns: ColumnDef<Nursery>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="text-white w-full justify-start">
-                    <Trash2Icon className="text-white mr-2" /> Hapus
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Yakin ingin menghapus data ini?</AlertDialogTitle>
-                    <AlertDialogDescription>Tindakan ini tidak dapat dibatalkan. Data akan dihapus permanen.</AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Batal</AlertDialogCancel>
-                    <AlertDialogAction
-                      className="bg-base-destructive text-white hover:bg-destructive/90"
-                      onClick={() => {
-                        // TODO: tambahkan fungsi hapus di sini
-                        console.log("Hapus ID:", id);
-                      }}>
-                      Hapus
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <Delete id={id} mutateGeoservices={() => mutate("/geoservice")} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
