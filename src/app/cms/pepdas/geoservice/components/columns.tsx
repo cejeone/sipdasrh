@@ -122,12 +122,12 @@ export const columns: ColumnDef<Geoservice>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/cms/pepdas/geoservice/${id}/edit`}>
+              <Link href={`/cms/pepdas/geoservice/edit/${id}`}>
                 <PencilIcon className="mr-2" /> Edit
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`/cms/pepdas/geoservice/${id}/detail`}>
+              <Link href={`/cms/pepdas/geoservice/detail/${id}`}>
                 <InfoIcon className="mr-2" /> Detail
               </Link>
             </DropdownMenuItem>
