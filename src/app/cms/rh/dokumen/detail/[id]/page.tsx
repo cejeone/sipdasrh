@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dokumen } from "@/model/rh/Dokumen";
-import AxiosInstance, { setupInterceptor } from "lib/axios";
+import { AxiosInstanceRh, setupInterceptor } from "lib/axios";
 import { Calendar, ChevronLeft, FileText, List, Tag } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +22,7 @@ interface DetailDokumenPageProps {
 }
 
 const DetailDokumenPage: FC<DetailDokumenPageProps> = (props) => {
-  setupInterceptor();
+  // setupInterceptor();
   const { id } = use(props.params);
 
   const [data, setData] = useState<Dokumen | null>(null);
@@ -32,7 +32,7 @@ const DetailDokumenPage: FC<DetailDokumenPageProps> = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get<Dokumen>(`/dokumen/${id}`);
+        const response = await AxiosInstanceRh.get<Dokumen>(`/dokumen/${id}`);
 
         const responseData = response.data;
 

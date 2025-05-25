@@ -1,3 +1,3 @@
-import AxiosInstance from "./axios";
+import { AxiosInstanceRh } from "./axios";
 
-export const fetcher = (url: string) => AxiosInstance.get(url).then((res) => res.data);
+export const fetcherRh = (url: string) => AxiosInstanceRh.get(url).then((res) => res.data);

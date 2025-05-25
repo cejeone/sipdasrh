@@ -8,7 +8,7 @@ import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { formSchema } from "./validation";
-import AxiosInstance from "lib/axios";
+import { AxiosInstance } from "lib/axios";
 
 import { setCookie } from "cookies-next/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";

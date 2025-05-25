@@ -37,7 +37,7 @@ import {
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Dokumen, DokumenResponse } from "@/model/rh/Dokumen";
 import { ApiResponse } from "@/model/ApiResponse";
-import { fetcher } from "lib/fetcher";
+import { fetcherRh } from "lib/fetcher";
 import useSWR from "swr";
 import { deleteDokumen } from "./lib/action";
 import { toast } from "sonner";
@@ -56,7 +56,7 @@ export default function DokumenPage() {
     return `/dokumen?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
-  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<DokumenResponse>>(swrKey, fetcher);
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<DokumenResponse>>(swrKey, fetcherRh);
 
   const dokumenList: Dokumen[] = currentData?._embedded?.dokumenList ?? [];
   const totalPages = currentData?.page?.totalPages ?? 1;

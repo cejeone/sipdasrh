@@ -24,7 +24,7 @@ export interface FormDokumenRef {
 }
 
 const FormDokumenPage = forwardRef<FormDokumenRef, FormDokumenProps>(({ type, defaultValues }, ref) => {
-  setupInterceptor();
+  // setupInterceptor();
   const router = useRouter();
 
   const [tipe, setTipe] = useState("");

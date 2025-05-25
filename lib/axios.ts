@@ -3,9 +3,29 @@ import { deleteCookie, getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseUrlPepdas = process.env.NEXT_PUBLIC_API_PEPDAS_URL;
+const baseUrlRh = process.env.NEXT_PUBLIC_API_RH_URL;
+
+console.log(baseUrl);
+console.log(baseUrlPepdas);
+console.log(baseUrlRh);
 
 const AxiosInstance = axios.create({
   baseURL: baseUrl,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const AxiosInstancePepdas = axios.create({
+  baseURL: baseUrlPepdas,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const AxiosInstanceRh = axios.create({
+  baseURL: baseUrlRh,
   headers: {
     "Content-Type": "application/json",
   },
@@ -45,4 +65,4 @@ export function setupInterceptor() {
   );
 }
 
-export default AxiosInstance;
+export { AxiosInstance, AxiosInstancePepdas, AxiosInstanceRh };

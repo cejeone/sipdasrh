@@ -1,8 +1,8 @@
-import AxiosInstance from "lib/axios";
+import { AxiosInstanceRh } from "lib/axios";
 
 export const createDokumen = async (dokumenData: any) => {
   try {
-    const response = await AxiosInstance.post("/dokumen", dokumenData);
+    const response = await AxiosInstanceRh.post("/dokumen", dokumenData);
     return response.data;
   } catch (error) {
     throw error;
@@ -11,7 +11,7 @@ export const createDokumen = async (dokumenData: any) => {
 
 export const editDokumen = async (dokumenData: any, id: string) => {
   try {
-    const response = await AxiosInstance.put(`/dokumen/${id}`, dokumenData);
+    const response = await AxiosInstanceRh.put(`/dokumen/${id}`, dokumenData);
     return response.data;
   } catch (error) {
     throw error;
@@ -20,7 +20,7 @@ export const editDokumen = async (dokumenData: any, id: string) => {
 
 export const detailDokumen = async (dokumenData: any, id: string) => {
   try {
-    const response = await AxiosInstance.get(`/dokumen/${id}`, dokumenData);
+    const response = await AxiosInstanceRh.get(`/dokumen/${id}`, dokumenData);
     return response.data;
   } catch (error) {
     throw error;
@@ -29,7 +29,7 @@ export const detailDokumen = async (dokumenData: any, id: string) => {
 
 export const deleteDokumen = async (id: string) => {
   try {
-    const response = await AxiosInstance.delete(`/dokumen/${id}`);
+    const response = await AxiosInstanceRh.delete(`/dokumen/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -44,7 +44,7 @@ export const uploadFilesToDokumen = async (id: string, files: File[]) => {
       formData.append("files", file);
     });
 
-    const response = await AxiosInstance.post(`/dokumen/${id}/files`, formData, {
+    const response = await AxiosInstanceRh.post(`/dokumen/${id}/files`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -57,14 +57,14 @@ export const uploadFilesToDokumen = async (id: string, files: File[]) => {
 };
 
 export const deleteDokumenFiles = async (dokumenId: string, fileIds: string[]) => {
-  await AxiosInstance.delete(`/dokumen/${dokumenId}/files`, {
+  await AxiosInstanceRh.delete(`/dokumen/${dokumenId}/files`, {
     data: fileIds,
   });
 };
 
 export const downloadDokumenFile = async (dokumenId: string, fileId: string) => {
   try {
-    const response = await AxiosInstance.get(`/dokumen/${dokumenId}/files/${fileId}/download`, {
+    const response = await AxiosInstanceRh.get(`/dokumen/${dokumenId}/files/${fileId}/download`, {
       responseType: "blob",
     });
 
