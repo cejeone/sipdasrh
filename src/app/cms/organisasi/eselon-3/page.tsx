@@ -13,10 +13,9 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon } from "lucide-react";
+import { columns } from "./components/columns";
 
-import { columns } from "./columns";
-import { Nursery } from "./types";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +23,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { MultiSelect } from "@/components/MultiSelect";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,77 +35,79 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { IconBorderOuter } from "@tabler/icons-react";
+import { Eselon3, Eselon3Response } from "@/model/organisasi/Eselon3";
+import { ApiResponse } from "@/model/ApiResponse";
+import useSWR from "swr";
+import { fetcherPepdas } from "lib/fetcher";
+import { deleteEselon3 } from "./lib/action";
+import { toast } from "sonner";
 
-const data: Nursery[] = [
-  {
-    id: "1",
-    eselon_2: "Sekretariat Direktorat Jenderal",
-    nama: "Kepala Bagian Perencanaan dan Evaluasi",
-    pejabat: "Ir. Dyah Murtiningsih, M.Hum",
-    tugas_fungsi: "string",
-    keterangan: "string",
-  },
-  {
-    id: "2",
-    eselon_2: "Sekretariat Direktorat Jenderal",
-    nama: "Kepala Bagian Keuangan dan Umum",
-    pejabat: "Ir. Dyah Murtiningsih, M.Hum",
-    tugas_fungsi: "string",
-    keterangan: "string",
-  },
-  {
-    id: "3",
-    eselon_2: "Sekretariat Direktorat Jenderal",
-    nama: "Kepala Bagian Hukum dan Kerja Sama",
-    pejabat: "Ir. Dyah Murtiningsih, M.Hum",
-    tugas_fungsi: "string",
-    keterangan: "string",
-  },
-];
+export default function Eselon3Page() {
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchBy, setSearchBy] = useState<string | undefined>(undefined);
+  const [searchValue, setSearchValue] = useState("");
 
-export default function EselonIII() {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const swrKey = useMemo(() => {
+    const params = new URLSearchParams({ page: pageIndex.toString(), size: pageSize.toString() });
+    if (searchBy && searchValue) {
+      params.set(searchBy, searchValue);
+    }
+    return `/eselon-3?${params.toString()}`;
+  }, [pageIndex, pageSize, searchBy, searchValue]);
+
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<Eselon3Response>>(swrKey, fetcherPepdas);
+
+  const eselon3List: Eselon3[] = currentData?._embedded?.eselon3List ?? [];
+  const totalPages = currentData?.page?.totalPages ?? 1;
+  const totalElements = currentData?.page?.totalElements ?? 0;
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchColumns, setSearchColumns] = useState<string[]>([]);
-
-  const filteredData = useMemo(() => {
-    if (!searchKeyword) return data;
-
-    const columnsToSearch = searchColumns.length > 0 ? searchColumns : Object.keys(data[0] ?? []);
-
-    return data.filter((row: Nursery) =>
-      columnsToSearch.some((col) => {
-        const value = String(row[col as keyof Nursery] ?? "").toLowerCase();
-        return value.includes(searchKeyword.toLowerCase());
-      })
-    );
-  }, [searchKeyword, searchColumns]);
-
+  const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
   const table = useReactTable({
-    data: filteredData,
+    data: eselon3List,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
+    pageCount: totalPages,
+    state: {
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
+      columnFilters,
+      columnVisibility,
+      rowSelection: selectedRowIds,
+    },
+    manualPagination: true,
+    onRowSelectionChange: setSelectedRowIds,
+    getRowId: (row) => row.id,
     getPaginationRowModel: getPaginationRowModel(),
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === "function" ? updater({ pageIndex, pageSize }) : updater;
+      setPageIndex(newPagination.pageIndex);
+      setPageSize(newPagination.pageSize);
+    },
+    getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
   });
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
+
+  const handleDeleteSelected = async () => {
+    try {
+      const idsToDelete = selectedRows.map((row) => row.original.id);
+      await Promise.all(idsToDelete.map((id) => deleteEselon3(id)));
+      await mutate();
+      setSelectedRowIds({});
+      toast.success("Data berhasil dihapus");
+    } catch (err) {
+      console.error("Gagal menghapus dokumen:", err);
+    }
+  };
 
   return (
     <>
@@ -116,12 +116,16 @@ export default function EselonIII() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[{ label: "Organisasi", href: "" }, { label: "Eselon III" }]} />
+              <Breadcrumbs items={[
+                { label: "Master Data", href: "" }, 
+                { label: "Organisasi" },
+                { label: "Eselon III" }
+              ]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <IconBorderOuter />
+                <Link2 />
                 <h1 className="text-2xl font-bold ">Eselon III</h1>
               </div>
-              <p className="text-sm text-base-gray">Informasi terkait data Eselon III</p>
+              <p className="text-sm text-base-gray">Informasi terkait data eselon III</p>
             </div>
             <Link href="eselon-3/create">
               <Button variant="green">
@@ -137,18 +141,36 @@ export default function EselonIII() {
         <main className="overflow-auto">
           <div className="w-full">
             <div className="flex items-center justify-between py-4">
-              <div className="menu-left flex gap-3">
-                <MultiSelect
-                  options={table
-                    .getAllColumns()
-                    .filter((col) => col.getCanHide() && col.id !== "actions")
-                    .map((col) => ({ label: col.id, value: col.id }))}
-                  value={searchColumns}
-                  onValueChange={setSearchColumns}
-                  placeholder="Cari berdasarkan"
-                />
+              <div className="flex gap-3 items-center">
+                {/* filtering */}
+                <Select key={searchBy ?? "empty"} value={searchBy ?? undefined} onValueChange={(val) => setSearchBy(val)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Cari berdasarkan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {table
+                      .getAllColumns()
+                      .filter((col) => col.getCanHide() && col.id !== "actions")
+                      .map((col) => (
+                        <SelectItem key={col.id} value={col.id}>
+                          {col.id}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
 
-                <Input placeholder="Cari..." value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} className="max-w-sm" />
+                <Input placeholder="Cari..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} className="max-w-sm" />
+
+                {(searchBy || searchValue) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchBy(undefined);
+                      setSearchValue("");
+                    }}>
+                    Reset
+                  </Button>
+                )}
               </div>
 
               <div className="menu-right flex gap-3">
@@ -166,14 +188,7 @@ export default function EselonIII() {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-base-destructive text-white hover:bg-destructive/90"
-                          onClick={() => {
-                            const idsToDelete = selectedRows.map((row) => row.original.id);
-                            console.log("Hapus ID:", idsToDelete);
-                            // TODO: ganti dengan API call atau state update
-                            setRowSelection({});
-                          }}>
+                        <AlertDialogAction className="bg-base-destructive text-white hover:bg-destructive/90" onClick={handleDeleteSelected}>
                           Hapus
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -181,9 +196,9 @@ export default function EselonIII() {
                   </AlertDialog>
                 )}
 
-                {/* <Button variant="outline" className="icon ">
+                <Button variant="outline" className="icon ">
                   <Settings2Icon /> Status
-                </Button> */}
+                </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline">
@@ -220,7 +235,13 @@ export default function EselonIII() {
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {table.getRowModel().rows.length ? (
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="text-center h-24">
+                        Loading data...
+                      </TableCell>
+                    </TableRow>
+                  ) : table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                         {row.getVisibleCells().map((cell) => (
@@ -230,7 +251,7 @@ export default function EselonIII() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24 text-center">
+                      <TableCell colSpan={columns.length} className="text-center h-24">
                         Tidak ditemukan data terkait.
                       </TableCell>
                     </TableRow>
@@ -239,7 +260,7 @@ export default function EselonIII() {
               </Table>
             </div>
 
-            {/* Pagination section */}
+            {/* Pagination */}
             <div className="flex items-center justify-between py-4">
               <div className="text-sm text-muted-foreground">
                 {table.getFilteredSelectedRowModel().rows.length} dari {table.getFilteredRowModel().rows.length} baris dipilih.
@@ -247,23 +268,22 @@ export default function EselonIII() {
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-2">
                   <span>Baris per halaman</span>
-                  <Select value={table.getState().pagination.pageSize.toString()} onValueChange={(value) => table.setPageSize(Number(value))}>
+                  <Select value={table.getState().pagination.pageSize.toString()} onValueChange={(v) => table.setPageSize(Number(v))}>
                     <SelectTrigger className="h-8 w-[70px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="30">30</SelectItem>
-                      <SelectItem value="40">40</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
+                      {[10, 20, 30, 40, 50].map((n) => (
+                        <SelectItem key={n} value={String(n)}>
+                          {n}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <span>
-                  Halaman {table.getState().pagination.pageIndex + 1} dari {table.getPageCount()}
+                  Halaman {pageIndex + 1} dari {totalPages}
                 </span>
-
                 <div className="flex items-center space-x-1">
                   <Button variant="outline" size="icon" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
                     <ChevronsLeft className="h-4 w-4" />

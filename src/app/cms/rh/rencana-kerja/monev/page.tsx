@@ -35,14 +35,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Eselon2, Eselon2Response } from "@/model/organisasi/Eselon2";
+import { Monev, MonevResponse } from "@/model/rh/Monev";
 import { ApiResponse } from "@/model/ApiResponse";
 import useSWR from "swr";
 import { fetcherPepdas } from "lib/fetcher";
-import { deleteEselon2 } from "./lib/action";
+import { deleteMonev } from "./lib/action";
 import { toast } from "sonner";
 
-export default function Eselon2Page() {
+export default function MonevPage() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [searchBy, setSearchBy] = useState<string | undefined>(undefined);
@@ -53,12 +53,12 @@ export default function Eselon2Page() {
     if (searchBy && searchValue) {
       params.set(searchBy, searchValue);
     }
-    return `/eselon-2?${params.toString()}`;
+    return `/monev?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
-  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<Eselon2Response>>(swrKey, fetcherPepdas);
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<MonevResponse>>(swrKey, fetcherPepdas);
 
-  const eselon2List: Eselon2[] = currentData?._embedded?.eselon2List ?? [];
+  const monevList: Monev[] = currentData?._embedded?.monevList ?? [];
   const totalPages = currentData?.page?.totalPages ?? 1;
   const totalElements = currentData?.page?.totalElements ?? 0;
 
@@ -66,7 +66,7 @@ export default function Eselon2Page() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
   const table = useReactTable({
-    data: eselon2List,
+    data: monevList,
     columns,
     pageCount: totalPages,
     state: {
@@ -100,7 +100,7 @@ export default function Eselon2Page() {
   const handleDeleteSelected = async () => {
     try {
       const idsToDelete = selectedRows.map((row) => row.original.id);
-      await Promise.all(idsToDelete.map((id) => deleteEselon2(id)));
+      await Promise.all(idsToDelete.map((id) => deleteMonev(id)));
       await mutate();
       setSelectedRowIds({});
       toast.success("Data berhasil dihapus");
@@ -116,18 +116,14 @@ export default function Eselon2Page() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[
-                { label: "Master Data", href: "" }, 
-                { label: "Organisasi" },
-                { label: "Eselon II" }
-              ]} />
+              <Breadcrumbs items={[{ label: "PEPDAS", href: "" }, { label: "Monev" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
                 <Link2 />
-                <h1 className="text-2xl font-bold ">Eselon II</h1>
+                <h1 className="text-2xl font-bold ">Monev</h1>
               </div>
-              <p className="text-sm text-base-gray">Informasi terkait data eselon II</p>
+              <p className="text-sm text-base-gray">Informasi terkait data monev pusat</p>
             </div>
-            <Link href="eselon-2/create">
+            <Link href="monev/create">
               <Button variant="green">
                 <Plus />
                 Tambah Data
