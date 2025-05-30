@@ -1,7 +1,7 @@
 export default function Cms() {
   return (
     <>
-      <h1>SuperAdmin</h1>
+      <h1>.</h1>
     </>
   );
 }

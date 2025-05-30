@@ -60,7 +60,9 @@ export default function HeroCarousel() {
 
         <Alert className="bg-amber-100 rounded-none p-2">
           <AlertTitle>
-            <strong>Pengumuman</strong> : Penggunaan pakaian dinas akan di seragamkan per 1 Mei 2025 (running text)
+            <marquee behavior="" direction="">
+              <strong>Pengumuman</strong> : Penggunaan pakaian dinas akan di seragamkan per 1 Mei 2025
+            </marquee>
           </AlertTitle>
         </Alert>
       </div>

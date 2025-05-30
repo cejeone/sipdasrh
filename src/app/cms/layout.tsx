@@ -148,52 +148,52 @@ const sidebarItems = [
   },
 
   // menu RM
-  {
-    groupTitle: "MENU RM",
-    items: [
-      {
-        title: "Dasbor",
-        icon: <IconChartHistogram className="w-4 h-4" />,
-        url: "/rm/dasbor",
-        submenus: [],
-      },
-      {
-        title: "Peta",
-        icon: <MapPin className="w-4 h-4" />,
-        url: "/rm/peta",
-        submenus: [],
-      },
-      {
-        title: "Tabular",
-        icon: <IconDatabase className="w-4 h-4" />,
-        url: "/rm/tabular",
-        submenus: [],
-      },
-      {
-        title: "Rencana Kerja",
-        icon: <IconTransformPoint className="w-4 h-4" />,
-        url: "/rh/rencana-kerja",
-        submenus: [
-          { name: "Program", url: "/rm/rencana-kerja/program", icon: <ClipboardList className="w-4 h-4" /> },
-          { name: "Kegiatan", url: "/rm/rencana-kerja/kegiatan", icon: <FileSpreadsheet className="w-4 h-4" /> },
-          { name: "Monitoring & Evaluasi", url: "/rm/rencana-kerja/monitoring-evaluasi", icon: <List className="w-4 h-4" /> },
-          { name: "Serah Terima", url: "/rm/rencana-kerja/serah-terima", icon: <FileLock2 className="w-4 h-4" /> },
-        ],
-      },
-      {
-        title: "Dokumen",
-        icon: <File className="w-4 h-4" />,
-        url: "/rm/dokumen",
-        submenus: [],
-      },
-      {
-        title: "Konten",
-        icon: <Newspaper className="w-4 h-4" />,
-        url: "/rm/konten",
-        submenus: [],
-      },
-    ],
-  },
+  // {
+  //   groupTitle: "MENU RM",
+  //   items: [
+  //     {
+  //       title: "Dasbor",
+  //       icon: <IconChartHistogram className="w-4 h-4" />,
+  //       url: "/rm/dasbor",
+  //       submenus: [],
+  //     },
+  //     {
+  //       title: "Peta",
+  //       icon: <MapPin className="w-4 h-4" />,
+  //       url: "/rm/peta",
+  //       submenus: [],
+  //     },
+  //     {
+  //       title: "Tabular",
+  //       icon: <IconDatabase className="w-4 h-4" />,
+  //       url: "/rm/tabular",
+  //       submenus: [],
+  //     },
+  //     {
+  //       title: "Rencana Kerja",
+  //       icon: <IconTransformPoint className="w-4 h-4" />,
+  //       url: "/rh/rencana-kerja",
+  //       submenus: [
+  //         { name: "Program", url: "/rm/rencana-kerja/program", icon: <ClipboardList className="w-4 h-4" /> },
+  //         { name: "Kegiatan", url: "/rm/rencana-kerja/kegiatan", icon: <FileSpreadsheet className="w-4 h-4" /> },
+  //         { name: "Monitoring & Evaluasi", url: "/rm/rencana-kerja/monitoring-evaluasi", icon: <List className="w-4 h-4" /> },
+  //         { name: "Serah Terima", url: "/rm/rencana-kerja/serah-terima", icon: <FileLock2 className="w-4 h-4" /> },
+  //       ],
+  //     },
+  //     {
+  //       title: "Dokumen",
+  //       icon: <File className="w-4 h-4" />,
+  //       url: "/rm/dokumen",
+  //       submenus: [],
+  //     },
+  //     {
+  //       title: "Konten",
+  //       icon: <Newspaper className="w-4 h-4" />,
+  //       url: "/rm/konten",
+  //       submenus: [],
+  //     },
+  //   ],
+  // },
 
   // superadmin
   {

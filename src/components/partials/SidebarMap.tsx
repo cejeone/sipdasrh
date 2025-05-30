@@ -16,13 +16,24 @@ export default function SidebarMap({ children }: { children: React.ReactNode }) 
             <nav className="flex flex-col gap-2 px-2 pb-5 overflow-y-auto">
               <ul className="space-y-2">
                 <li>
-                  <Link href="/map">🗺️ Map View</Link>
+                  <Link href="/map" className="text-white">
+                    Layer
+                  </Link>
                 </li>
                 <li>
-                  <Link href="/settings">⚙️ Settings</Link>
+                  <Link href="/settings" className="text-white">
+                    Basemap
+                  </Link>
                 </li>
                 <li>
-                  <Link href="/help">❓ Help</Link>
+                  <Link href="/help" className="text-white">
+                    Legend
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/help" className="text-white">
+                    Bookmarks
+                  </Link>
                 </li>
               </ul>
             </nav>

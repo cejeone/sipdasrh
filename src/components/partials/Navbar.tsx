@@ -13,9 +13,12 @@ const navItems = [
   {
     label: "Dasbor",
     subItems: [
-      { label: "Web Development", href: "/layanan/web" },
-      { label: "Mobile App", href: "/layanan/mobile" },
-      { label: "UI/UX Design", href: "/layanan/uiux" },
+      { label: "Sekditjen", href: "/dashboard/sekditjen" },
+      { label: "Direktorat PEPDAS", href: "/dashboard/direktorat-pepdas" },
+      { label: "Direktorat RM", href: "/dashboard/direktorat-rm" },
+      { label: "Direktorat PPTH", href: "/dashboard/direktorat-ppth" },
+      { label: "Direktorat TKTRH", href: "/dashboard/direktorat-tktrh" },
+      { label: "Direktorat RH", href: "/dashboard/direktorat-rh" },
     ],
   },
   {
