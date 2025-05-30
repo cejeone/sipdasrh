@@ -2,7 +2,7 @@ import axios from "axios";
 import { deleteCookie, getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL; //superadmin/admin
 const baseUrlPepdas = process.env.NEXT_PUBLIC_API_PEPDAS_URL;
 const baseUrlRh = process.env.NEXT_PUBLIC_API_RH_URL;
 
