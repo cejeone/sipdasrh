@@ -1,19 +1,16 @@
 "use client";
 
-import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronLeft, Link2 } from "lucide-react";
-import InfoItem from "@/components/InfoItem";
+import { Building, ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import ButtonSubmit from "@/components/ButtonSubmit";
 import { FC, use, useEffect, useRef, useState } from "react";
-import FormEselon2Page, { FormEselon2Ref } from "../../components/form";
-import { Eselon2 } from "@/model/organisasi/Eselon2";
-import { AxiosInstancePepdas } from "lib/axios";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FormEselon2Ref } from "../../components/form";
+import { Eselon2 } from "@/model/admin/organisasi/Eselon2";
+import { AxiosInstance } from "lib/axios";
+import DOMPurify from "dompurify";
 
 type Params = {
   id: string;
@@ -36,7 +33,7 @@ const DetailEselon2Page: FC<DetailEselon2PageProps> = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstancePepdas.get<Eselon2>(`/eselon-2/${id}`);
+        const response = await AxiosInstance.get<Eselon2>(`/eselon2/${id}`);
 
         const responseData = response.data;
 
@@ -59,13 +56,11 @@ const DetailEselon2Page: FC<DetailEselon2PageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[
-              { label: "Masterdata", href: "" }, 
-              { label: "Organisasi", href: "" }, 
-              { label: "Eselon2", href: "/cms/organisasi/eselon-2" }, 
-              { label: "Lihat Data" }]} />
+            <Breadcrumbs
+              items={[{ label: "Masterdata", href: "" }, { label: "Organisasi", href: "" }, { label: "Eselon II", href: "/cms/organisasi/eselon-2" }, { label: "Lihat Data" }]}
+            />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Link2 />
+              <Building />
               <h1 className="text-2xl font-bold">Eselon II</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Detail
@@ -101,12 +96,8 @@ const DetailEselon2Page: FC<DetailEselon2PageProps> = (props) => {
                 <table className="text-left">
                   <tbody>
                     <tr>
-                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">ID</td>
-                      <td className="p-2 text-sm">{data.id}</td>
-                    </tr>
-                    <tr>
                       <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Eselon I</td>
-                      <td className="p-2 text-sm">{data.eselon1}</td>
+                      <td className="p-2 text-sm">{data.eselon1?.nama}</td>
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">Nama</td>
@@ -117,8 +108,10 @@ const DetailEselon2Page: FC<DetailEselon2PageProps> = (props) => {
                       <td className="p-2 text-sm">{data.pejabat}</td>
                     </tr>
                     <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Tugas dan Fungsi</td>
-                      <td className="p-2 text-sm">{data.tugasDanFungsi}</td>
+                      <td className="p-2 min-w-[200px]  font-semibold text-base-green text-sm">Tugas dan Fungsi</td>
+                      <td className="p-2 text-sm">
+                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data.tugasDanFungsi) }} />
+                      </td>
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">Keterangan</td>

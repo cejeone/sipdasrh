@@ -1,5 +1,5 @@
 export interface Eselon1 {
-  id: string;
+  id: number;
   nama: string;
   pejabat: string;
   tugasDanFungsi: string;

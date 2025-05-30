@@ -17,7 +17,7 @@ import { deleteEselon1, detailEselon1 } from "../lib/action";
 import { toast } from "sonner";
 
 interface Props {
-  id: string;
+  id: number;
   mutateEselon1: () => void;
 }
 

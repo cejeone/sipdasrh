@@ -11,11 +11,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Eselon1 } from "@/model/organisasi/Eselon1"; 
+import { Eselon1 } from "@/model/admin/organisasi/Eselon1";
 import dynamic from "next/dynamic";
 
-const Editor = dynamic(() => import("react-simple-wysiwyg").then(mod => mod.default), { ssr: false });
-
+const Editor = dynamic(() => import("react-simple-wysiwyg").then((mod) => mod.default), { ssr: false });
 
 interface FormEselon1Props {
   type?: "ADD" | "EDIT";
@@ -66,7 +65,6 @@ const FormEselon1Page = forwardRef<FormEselon1Ref, FormEselon1Props>(({ type, de
     e.preventDefault();
 
     try {
-    
       const validation = eselon1FormSchema.safeParse({
         id,
         nama,
@@ -109,20 +107,18 @@ const FormEselon1Page = forwardRef<FormEselon1Ref, FormEselon1Props>(({ type, de
   return (
     <form ref={formRef} onSubmit={handleEselon1}>
       <CardContent className="space-y-4">
-        <InputField label="ID" value={id} onChange={(e) => setNama(e.target.value)} error={errors.id} disabled />
         <InputField label="Nama" value={nama} onChange={(e) => setNama(e.target.value)} error={errors.nama} />
-        <InputField label="Pejabat" value={pejabat} onChange={(e) => setPejabat(e.target.value)} error={errors.pejabat}/>
+        <InputField label="Pejabat" value={pejabat} onChange={(e) => setPejabat(e.target.value)} error={errors.pejabat} />
         <div>
           <Label className="text-secondary-green mb-2 font-bold">Tugas dan Fungsi</Label>
           <Editor value={tugasDanFungsi} onChange={(e) => setTugasDanFungsi(e.target.value)} />
           {errors.tugasDanFungsi && <p className="text-sm text-base-destructive mt-1">{errors.tugasDanFungsi}</p>}
-        </div>       
+        </div>
         <div>
           <Label className="text-secondary-green mb-2 font-bold">Keterangan</Label>
           <Textarea className="border-border" value={keterangan} onChange={(e) => setKeterangan(e.target.value)} placeholder="Masukkan Keterangan" />
           {errors.keterangan && <p className="text-sm text-base-destructive mt-1">{errors.keterangan}</p>}
-        </div>        
-
+        </div>
       </CardContent>
     </form>
   );

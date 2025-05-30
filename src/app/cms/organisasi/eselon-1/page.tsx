@@ -15,7 +15,7 @@ import {
 
 import { columns } from "./components/columns";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2 } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2, Building } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,10 +35,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Eselon1, Eselon1Response } from "@/model/organisasi/Eselon1";
+import { Eselon1, Eselon1Response } from "@/model/admin/organisasi/Eselon1";
 import { ApiResponse } from "@/model/ApiResponse";
 import useSWR from "swr";
-import { fetcherPepdas } from "lib/fetcher";
+import { fetcherPepdas, fetcherSuperadmin } from "lib/fetcher";
 import { deleteEselon1 } from "./lib/action";
 import { toast } from "sonner";
 
@@ -53,10 +53,10 @@ export default function Eselon1Page() {
     if (searchBy && searchValue) {
       params.set(searchBy, searchValue);
     }
-    return `/eselon-1?${params.toString()}`;
+    return `/eselon1?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
-  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<Eselon1Response>>(swrKey, fetcherPepdas);
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<Eselon1Response>>(swrKey, fetcherSuperadmin);
 
   const eselon1List: Eselon1[] = currentData?._embedded?.eselon1List ?? [];
   const totalPages = currentData?.page?.totalPages ?? 1;
@@ -80,7 +80,8 @@ export default function Eselon1Page() {
     },
     manualPagination: true,
     onRowSelectionChange: setSelectedRowIds,
-    getRowId: (row) => row.id,
+    // getRowId: (row) => row.id,
+    getRowId: (row: Eselon1) => row.id.toString(),
     getPaginationRowModel: getPaginationRowModel(),
     enableRowSelection: true,
     enableMultiRowSelection: true,
@@ -116,13 +117,9 @@ export default function Eselon1Page() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[
-                { label: "Master Data", href: "" }, 
-                { label: "Organisasi" },
-                { label: "Eselon I" }
-              ]} />
+              <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "Organisasi" }, { label: "Eselon I" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <Link2 />
+                <Building />
                 <h1 className="text-2xl font-bold ">Eselon I</h1>
               </div>
               <p className="text-sm text-base-gray">Informasi terkait data eselon I</p>
@@ -195,10 +192,6 @@ export default function Eselon1Page() {
                     </AlertDialogContent>
                   </AlertDialog>
                 )}
-
-                <Button variant="outline" className="icon ">
-                  <Settings2Icon /> Status
-                </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline">

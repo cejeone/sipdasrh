@@ -6,10 +6,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dokumen } from "@/model/rh/Dokumen";
 import Delete from "./delete";
 import { mutate } from "swr";
-import { Eselon3 } from "@/model/organisasi/Eselon3";
+import { Eselon3 } from "@/model/admin/organisasi/Eselon3";
 
 export const columns: ColumnDef<Eselon3>[] = [
   {
@@ -33,6 +32,14 @@ export const columns: ColumnDef<Eselon3>[] = [
     },
   },
   {
+    accessorKey: "eselon2.nama",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        ESELON II <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
     accessorKey: "nama",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -45,14 +52,6 @@ export const columns: ColumnDef<Eselon3>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         PEJABAT <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "eselon2",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        ESELON II <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
   },

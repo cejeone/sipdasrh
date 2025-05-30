@@ -6,10 +6,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dokumen } from "@/model/rh/Dokumen";
 import Delete from "./delete";
 import { mutate } from "swr";
-import { Eselon2 } from "@/model/organisasi/Eselon2";
+import { Eselon2 } from "@/model/admin/organisasi/Eselon2";
 
 export const columns: ColumnDef<Eselon2>[] = [
   {
@@ -31,6 +30,14 @@ export const columns: ColumnDef<Eselon2>[] = [
       const globalIndex = pageIndex * pageSize + indexInSortedData + 1;
       return <span>{globalIndex}</span>;
     },
+  },
+  {
+    accessorKey: "eselon1.nama",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        ESELON I <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
   },
   {
     accessorKey: "nama",

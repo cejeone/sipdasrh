@@ -6,9 +6,8 @@ export const eselon2FormSchema = z.object({
   pejabat: z.string().min(1, { message: "Pejabat wajib diisi" }).max(255, { message: "BPDAS maksimal 255 karakter" }),
 
   tugasDanFungsi: z.string().min(1, { message: "Tugas Dan Fungsi wajib diisi" }).optional(),
-  
-  eselon1: z.string().min(1, { message: "Eselon I wajib diisi" }).optional(),
 
   keterangan: z.string().min(1, { message: "Ketarangan wajib diisi" }).max(500, { message: "Ketarangan maksimal 500 karakter" }),
 
+  eselon1Id: z.number({ invalid_type_error: "Eselon I harus dipilih" }),
 });

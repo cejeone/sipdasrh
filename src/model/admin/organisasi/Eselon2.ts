@@ -1,10 +1,13 @@
+import { Eselon1 } from "./Eselon1";
+
 export interface Eselon2 {
-  id: string;
+  id: number;
   nama: string;
   pejabat: string;
   tugasDanFungsi: string;
   keterangan: string;
-  eselon1: string;
+  eselon1Id: number;
+  eselon1?: Eselon1;
 }
 
 export interface Eselon2Response {

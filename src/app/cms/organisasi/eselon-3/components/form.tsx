@@ -9,31 +9,32 @@ import { CardContent } from "@/components/ui/card";
 import InputField from "@/components/InputField";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Eselon3 } from "@/model/organisasi/Eselon3";
+import { Eselon3 } from "@/model/admin/organisasi/Eselon3";
 import dynamic from "next/dynamic";
+import { Eselon2 } from "@/model/admin/organisasi/Eselon2";
+import SelectCombobox from "@/components/SelectCombobox";
 
-const Editor = dynamic(() => import("react-simple-wysiwyg").then(mod => mod.default), { ssr: false });
+const Editor = dynamic(() => import("react-simple-wysiwyg").then((mod) => mod.default), { ssr: false });
 
 interface FormEselon3Props {
   type?: "ADD" | "EDIT";
   defaultValues?: Eselon3 | null;
+  eselon2List: Eselon2[];
 }
 
 export interface FormEselon3Ref {
   submit: () => void;
 }
 
-const FormEselon3Page = forwardRef<FormEselon3Ref, FormEselon3Props>(({ type, defaultValues }, ref) => {
+const FormEselon3Page = forwardRef<FormEselon3Ref, FormEselon3Props>(({ type, defaultValues, eselon2List }, ref) => {
   // setupInterceptor();
   const router = useRouter();
 
-  const [id, setId] = useState("");
   const [nama, setNama] = useState("");
   const [pejabat, setPejabat] = useState("");
   const [tugasDanFungsi, setTugasDanFungsi] = useState("");
-  const [eselon2, setEselon2] = useState("");
+  const [eselon2Id, setEselon2Id] = useState("");
   const [keterangan, setKeterangan] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -41,10 +42,10 @@ const FormEselon3Page = forwardRef<FormEselon3Ref, FormEselon3Props>(({ type, de
 
   useEffect(() => {
     if (type == "EDIT" && defaultValues) {
+      setEselon2Id(String(defaultValues?.eselon2?.id ?? ""));
       setNama(defaultValues.nama || "");
       setPejabat(defaultValues.pejabat || "");
       setTugasDanFungsi(defaultValues.tugasDanFungsi || "");
-      setEselon2(defaultValues.eselon2 || "");
       setKeterangan(defaultValues.keterangan || "");
     }
   }, [type, defaultValues]);
@@ -66,14 +67,14 @@ const FormEselon3Page = forwardRef<FormEselon3Ref, FormEselon3Props>(({ type, de
   const handleEselon3 = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const safeNumber = (value: string) => (value.trim() === "" ? undefined : Number(value));
+
     try {
-    
       const validation = eselon3FormSchema.safeParse({
-        id,
         nama,
         pejabat,
         tugasDanFungsi,
-        eselon2,
+        eselon2Id: safeNumber(eselon2Id),
         keterangan,
       });
 
@@ -111,32 +112,29 @@ const FormEselon3Page = forwardRef<FormEselon3Ref, FormEselon3Props>(({ type, de
   return (
     <form ref={formRef} onSubmit={handleEselon3}>
       <CardContent className="space-y-4">
-        <InputField label="ID" value={id} onChange={(e) => setNama(e.target.value)} error={errors.id} disabled />
-        <div>
-          <Label className="text-secondary-green mb-2 font-bold">Eselon II</Label>
-          <Select value={eselon2} onValueChange={setEselon2}>
-            <SelectTrigger className="w-full border-border">
-              <SelectValue placeholder="Pilih salah satu" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Direktorat Rehabilitasi Mangrove">Direktorat Rehabilitasi Mangrove</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.eselon2 && <p className="text-sm text-base-destructive mt-1">{errors.eselon2}</p>}
-        </div>
+        <SelectCombobox
+          label="Eselon II"
+          value={eselon2Id}
+          onChange={setEselon2Id}
+          options={eselon2List.map((eselon) => ({
+            label: eselon.nama,
+            value: String(eselon.id),
+          }))}
+          error={errors.eselon1Id}
+        />
+
         <InputField label="Nama" value={nama} onChange={(e) => setNama(e.target.value)} error={errors.nama} />
-        <InputField label="Pejabat" value={pejabat} onChange={(e) => setPejabat(e.target.value)} error={errors.pejabat}/>
+        <InputField label="Pejabat" value={pejabat} onChange={(e) => setPejabat(e.target.value)} error={errors.pejabat} />
         <div>
           <Label className="text-secondary-green mb-2 font-bold">Tugas dan Fungsi</Label>
           <Editor value={tugasDanFungsi} onChange={(e) => setTugasDanFungsi(e.target.value)} />
           {errors.tugasDanFungsi && <p className="text-sm text-base-destructive mt-1">{errors.tugasDanFungsi}</p>}
-        </div>        
+        </div>
         <div>
           <Label className="text-secondary-green mb-2 font-bold">Keterangan</Label>
           <Textarea className="border-border" value={keterangan} onChange={(e) => setKeterangan(e.target.value)} placeholder="Masukkan Keterangan" />
           {errors.keterangan && <p className="text-sm text-base-destructive mt-1">{errors.keterangan}</p>}
-        </div>        
-
+        </div>
       </CardContent>
     </form>
   );

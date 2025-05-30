@@ -1,19 +1,16 @@
 "use client";
 
-import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronLeft, Link2 } from "lucide-react";
-import InfoItem from "@/components/InfoItem";
+import { Building, ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import ButtonSubmit from "@/components/ButtonSubmit";
 import { FC, use, useEffect, useRef, useState } from "react";
-import FormEselon1Page, { FormEselon1Ref } from "../../components/form";
-import { Eselon1 } from "@/model/organisasi/Eselon1";
-import { AxiosInstancePepdas } from "lib/axios";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FormEselon1Ref } from "../../components/form";
+import { Eselon1 } from "@/model/admin/organisasi/Eselon1";
+import { AxiosInstance } from "lib/axios";
+import DOMPurify from "dompurify";
 
 type Params = {
   id: string;
@@ -36,7 +33,7 @@ const DetailEselon1Page: FC<DetailEselon1PageProps> = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstancePepdas.get<Eselon1>(`/eselon-1/${id}`);
+        const response = await AxiosInstance.get<Eselon1>(`/eselon1/${id}`);
 
         const responseData = response.data;
 
@@ -59,19 +56,17 @@ const DetailEselon1Page: FC<DetailEselon1PageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[
-              { label: "Masterdata", href: "" }, 
-              { label: "Organisasi", href: "" }, 
-              { label: "Eselon1", href: "/cms/organisasi/eselon-1" }, 
-              { label: "Lihat Data" }]} />
+            <Breadcrumbs
+              items={[{ label: "Masterdata", href: "" }, { label: "Organisasi", href: "" }, { label: "Eselon I", href: "/cms/organisasi/eselon-1" }, { label: "Lihat Data" }]}
+            />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Link2 />
+              <Building />
               <h1 className="text-2xl font-bold">Eselon I</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Detail
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk melihat data eselon II</p>
+            <p className="text-sm text-base-gray">Form untuk melihat data eselon I</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <Link href="/cms/organisasi/eselon-1">
@@ -101,23 +96,21 @@ const DetailEselon1Page: FC<DetailEselon1PageProps> = (props) => {
                 <table className="text-left">
                   <tbody>
                     <tr>
-                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">ID</td>
-                      <td className="p-2 text-sm">{data.id}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Nama</td>
+                      <td className="p-2 min-w-[200px]   font-semibold text-base-green text-sm">Nama</td>
                       <td className="p-2 text-sm">{data.nama}</td>
                     </tr>
                     <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Pejabat</td>
+                      <td className="p-2 min-w-[200px]  font-semibold text-base-green text-sm">Pejabat</td>
                       <td className="p-2 text-sm">{data.pejabat}</td>
                     </tr>
                     <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Tugas dan Fungsi</td>
-                      <td className="p-2 text-sm">{data.tugasDanFungsi}</td>
+                      <td className="p-2 min-w-[200px]  font-semibold text-base-green text-sm">Tugas dan Fungsi</td>
+                      <td className="p-2 text-sm">
+                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data.tugasDanFungsi) }} />
+                      </td>
                     </tr>
                     <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Keterangan</td>
+                      <td className="p-2 min-w-[200px]  font-semibold text-base-green text-sm">Keterangan</td>
                       <td className="p-2 text-sm">{data.keterangan}</td>
                     </tr>
                   </tbody>

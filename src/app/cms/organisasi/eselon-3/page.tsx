@@ -15,7 +15,7 @@ import {
 
 import { columns } from "./components/columns";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2 } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2, Building } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,10 +35,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Eselon3, Eselon3Response } from "@/model/organisasi/Eselon3";
+import { Eselon3, Eselon3Response } from "@/model/admin/organisasi/Eselon3";
 import { ApiResponse } from "@/model/ApiResponse";
 import useSWR from "swr";
-import { fetcherPepdas } from "lib/fetcher";
+import { fetcherSuperadmin } from "lib/fetcher";
 import { deleteEselon3 } from "./lib/action";
 import { toast } from "sonner";
 
@@ -53,12 +53,12 @@ export default function Eselon3Page() {
     if (searchBy && searchValue) {
       params.set(searchBy, searchValue);
     }
-    return `/eselon-3?${params.toString()}`;
+    return `/eselon3?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
-  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<Eselon3Response>>(swrKey, fetcherPepdas);
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<Eselon3Response>>(swrKey, fetcherSuperadmin);
 
-  const eselon3List: Eselon3[] = currentData?._embedded?.eselon3List ?? [];
+  const eselon2List: Eselon3[] = currentData?._embedded?.eselon3List ?? [];
   const totalPages = currentData?.page?.totalPages ?? 1;
   const totalElements = currentData?.page?.totalElements ?? 0;
 
@@ -66,7 +66,7 @@ export default function Eselon3Page() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
   const table = useReactTable({
-    data: eselon3List,
+    data: eselon2List,
     columns,
     pageCount: totalPages,
     state: {
@@ -80,7 +80,7 @@ export default function Eselon3Page() {
     },
     manualPagination: true,
     onRowSelectionChange: setSelectedRowIds,
-    getRowId: (row) => row.id,
+    getRowId: (row: Eselon3) => row.id.toString(),
     getPaginationRowModel: getPaginationRowModel(),
     enableRowSelection: true,
     enableMultiRowSelection: true,
@@ -116,13 +116,9 @@ export default function Eselon3Page() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[
-                { label: "Master Data", href: "" }, 
-                { label: "Organisasi" },
-                { label: "Eselon III" }
-              ]} />
+              <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "Organisasi" }, { label: "Eselon III" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <Link2 />
+                <Building />
                 <h1 className="text-2xl font-bold ">Eselon III</h1>
               </div>
               <p className="text-sm text-base-gray">Informasi terkait data eselon III</p>
@@ -196,9 +192,6 @@ export default function Eselon3Page() {
                   </AlertDialog>
                 )}
 
-                <Button variant="outline" className="icon ">
-                  <Settings2Icon /> Status
-                </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline">
