@@ -32,18 +32,18 @@ export const columns: ColumnDef<Provinsi>[] = [
     },
   },
   {
-    accessorKey: "namaProvinsi",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        NAMA PROVINSI <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
     accessorKey: "kodeDepdagri",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         KODE DEPDAGRI <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "namaProvinsi",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        NAMA PROVINSI <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
   },

@@ -4,7 +4,7 @@ import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link2 } from "lucide-react";
+import { Link2, List } from "lucide-react";
 import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -67,7 +67,7 @@ const EditProvinsiPage: FC<EditProvinsiPageProps> = (props) => {
               ]}
             />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Link2 />
+              <List />
               <h1 className="text-2xl font-bold">Provinsi</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Perbaharui
