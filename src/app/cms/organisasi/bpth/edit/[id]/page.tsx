@@ -9,34 +9,54 @@ import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
-import { useEffect, useRef, useState } from "react";
-import FormBpdasPage, { FormBpdasRef } from "../components/form";
+import { FC, use, useEffect, useRef, useState } from "react";
+import FormBpthPage, { FormBpthRef } from "../../components/form";
+import { Bpth } from "@/model/admin/organisasi/Bpth";
+import { AxiosInstance } from "lib/axios";
 import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provinsi";
 import { ApiResponse } from "@/model/ApiResponse";
-import { AxiosInstance } from "lib/axios";
 
-const CreateBpdasPage = () => {
+type Params = {
+  id: number;
+};
+
+interface EditBpthPageProps {
+  params: Promise<Params>;
+}
+
+const EditBpthPage: FC<EditBpthPageProps> = (props) => {
+  // setupInterceptor();
+  const { id } = use(props.params);
+
+  const formRef = useRef<FormBpthRef>(null);
+
+  const [data, setData] = useState<Bpth | null>(null);
   const [dataProvinsi, setDataProvinsi] = useState<Provinsi[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
+        const response = await AxiosInstance.get<Bpth>(`/bpth/${id}`);
         const responseData = response.data;
-
-        setDataProvinsi(responseData._embedded?.provinsiList);
         console.log(responseData);
+        setData(responseData);
+
+        const responseProvinsi = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
+        const responseProvinsiData = responseProvinsi.data;
+        setDataProvinsi(responseProvinsiData._embedded?.provinsiList);
+
+        setLoading(false);
       } catch (error: any) {
-        setError(error?.message || "Gagal mendapatkan data");
-        console.error("Fetch provinsi gagal:", error);
+        setError(error.message || "Gagal mendapatkan data");
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
-
-  const formRef = useRef<FormBpdasRef>(null);
+  }, [id]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -45,20 +65,20 @@ const CreateBpdasPage = () => {
         <div className="flex items-center justify-between mb-2">
           <div>
             <Breadcrumbs
-              items={[{ label: "Organisasi", href: "" }, { label: "BDAS", href: "/cms/organisasi/bpdas" }, { label: "Buat Data" }]}
+              items={[{ label: "Organisasi", href: "" }, { label: "BPTH", href: "/cms/organisasi/bpth" }, { label: "Ubah Data" }]}
             />
             <div className="flex items-center gap-2 text-secondary-green">
               <Building />
-              <h1 className="text-2xl font-bold">BPDAS</h1>
+              <h1 className="text-2xl font-bold">BPTH</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
-                Tambah
+                Perbaharui
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk membuat data BPDAS</p>
+            <p className="text-sm text-base-gray">Form untuk mengubah data BPTH</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <ButtonSubmit onClick={() => formRef.current?.submit()} />
-            <Link href="/cms/organisasi/bpdas">
+            <Link href="/cms/organisasi/bpth">
               <Button variant="outline">
                 <IconCircleX /> Batal
               </Button>
@@ -78,16 +98,16 @@ const CreateBpdasPage = () => {
                 <IconFrame />
                 <h5 className="font-bold">Informasi</h5>
               </div>
-              <InfoItem number="1" title="Kode BPDAS" description="Masukkan kode Balai Pengelolaan Daerah Aliran Sungai dan Hutan Lindung (BPDAS) yang sesuai." />
-              <InfoItem number="2" title="Nama BPDAS" description="Masukkan Nama Balai Pengelolaan Daerah Aliran Sungai dan Hutan Lindung (BPDAS) yang sesuai." />
-              <InfoItem number="3" title="Provinsi" description="Pilih nama provinsi tempat BPDAS berada." />
+              <InfoItem number="1" title="Kode BPTH" description="Masukkan kode Balai Pengelolaan Tanaman Hutan yang sesuai." />
+              <InfoItem number="2" title="Nama BPTH" description="Masukkan Nama Balai Pengelolaan Tanaman Hutan yang sesuai." />
+              <InfoItem number="3" title="Provinsi" description="Pilih nama provinsi tempat BPTH berada." />
               <InfoItem number="4" title="Alamat" description="Masukkan alamat lengkap UPTD." />
               <InfoItem number="5" title="Telepon" description="Masukkan nomor telepon yang dapat dihubungi untuk keperluan administrasi." />
             </div>
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormBpdasPage type="ADD" provinsiList={dataProvinsi} ref={formRef} />
+                <FormBpthPage type="EDIT" provinsiList={dataProvinsi} ref={formRef} defaultValues={data} />
               </Card>
             </div>
           </CardContent>
@@ -97,4 +117,4 @@ const CreateBpdasPage = () => {
   );
 };
 
-export default CreateBpdasPage;
+export default EditBpthPage;

@@ -9,34 +9,54 @@ import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
-import { useEffect, useRef, useState } from "react";
-import FormBpdasPage, { FormBpdasRef } from "../components/form";
+import { FC, use, useEffect, useRef, useState } from "react";
+import FormBpdasPage, { FormBpdasRef } from "../../components/form";
+import { Bpdas } from "@/model/admin/organisasi/Bpdas";
+import { AxiosInstance } from "lib/axios";
 import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provinsi";
 import { ApiResponse } from "@/model/ApiResponse";
-import { AxiosInstance } from "lib/axios";
 
-const CreateBpdasPage = () => {
+type Params = {
+  id: number;
+};
+
+interface EditBpdasPageProps {
+  params: Promise<Params>;
+}
+
+const EditBpdasPage: FC<EditBpdasPageProps> = (props) => {
+  // setupInterceptor();
+  const { id } = use(props.params);
+
+  const formRef = useRef<FormBpdasRef>(null);
+
+  const [data, setData] = useState<Bpdas | null>(null);
   const [dataProvinsi, setDataProvinsi] = useState<Provinsi[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
+        const response = await AxiosInstance.get<Bpdas>(`/bpdas/${id}`);
         const responseData = response.data;
-
-        setDataProvinsi(responseData._embedded?.provinsiList);
         console.log(responseData);
+        setData(responseData);
+
+        const responseProvinsi = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
+        const responseProvinsiData = responseProvinsi.data;
+        setDataProvinsi(responseProvinsiData._embedded?.provinsiList);
+
+        setLoading(false);
       } catch (error: any) {
-        setError(error?.message || "Gagal mendapatkan data");
-        console.error("Fetch provinsi gagal:", error);
+        setError(error.message || "Gagal mendapatkan data");
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
-
-  const formRef = useRef<FormBpdasRef>(null);
+  }, [id]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -45,16 +65,16 @@ const CreateBpdasPage = () => {
         <div className="flex items-center justify-between mb-2">
           <div>
             <Breadcrumbs
-              items={[{ label: "Organisasi", href: "" }, { label: "BDAS", href: "/cms/organisasi/bpdas" }, { label: "Buat Data" }]}
+              items={[{ label: "Organisasi", href: "" }, { label: "BPDAS", href: "/cms/organisasi/bpdas" }, { label: "Ubah Data" }]}
             />
             <div className="flex items-center gap-2 text-secondary-green">
               <Building />
               <h1 className="text-2xl font-bold">BPDAS</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
-                Tambah
+                Perbaharui
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk membuat data BPDAS</p>
+            <p className="text-sm text-base-gray">Form untuk mengubah data BPDAS</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <ButtonSubmit onClick={() => formRef.current?.submit()} />
@@ -87,7 +107,7 @@ const CreateBpdasPage = () => {
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormBpdasPage type="ADD" provinsiList={dataProvinsi} ref={formRef} />
+                <FormBpdasPage type="EDIT" provinsiList={dataProvinsi} ref={formRef} defaultValues={data} />
               </Card>
             </div>
           </CardContent>
@@ -97,4 +117,4 @@ const CreateBpdasPage = () => {
   );
 };
 
-export default CreateBpdasPage;
+export default EditBpdasPage;

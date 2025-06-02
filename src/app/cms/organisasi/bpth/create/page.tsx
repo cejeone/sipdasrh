@@ -10,12 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
 import { useEffect, useRef, useState } from "react";
-import FormBpdasPage, { FormBpdasRef } from "../components/form";
+import FormBpthPage, { FormBpthRef } from "../components/form";
 import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provinsi";
 import { ApiResponse } from "@/model/ApiResponse";
 import { AxiosInstance } from "lib/axios";
 
-const CreateBpdasPage = () => {
+const CreateBpthPage = () => {
   const [dataProvinsi, setDataProvinsi] = useState<Provinsi[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,7 +36,7 @@ const CreateBpdasPage = () => {
     fetchData();
   }, []);
 
-  const formRef = useRef<FormBpdasRef>(null);
+  const formRef = useRef<FormBpthRef>(null);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -45,20 +45,20 @@ const CreateBpdasPage = () => {
         <div className="flex items-center justify-between mb-2">
           <div>
             <Breadcrumbs
-              items={[{ label: "Organisasi", href: "" }, { label: "BDAS", href: "/cms/organisasi/bpdas" }, { label: "Buat Data" }]}
+              items={[{ label: "Organisasi", href: "" }, { label: "BDAS", href: "/cms/organisasi/bpth" }, { label: "Buat Data" }]}
             />
             <div className="flex items-center gap-2 text-secondary-green">
               <Building />
-              <h1 className="text-2xl font-bold">BPDAS</h1>
+              <h1 className="text-2xl font-bold">BPTH</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Tambah
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk membuat data BPDAS</p>
+            <p className="text-sm text-base-gray">Form untuk membuat data BPTH</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <ButtonSubmit onClick={() => formRef.current?.submit()} />
-            <Link href="/cms/organisasi/bpdas">
+            <Link href="/cms/organisasi/bpth">
               <Button variant="outline">
                 <IconCircleX /> Batal
               </Button>
@@ -78,16 +78,16 @@ const CreateBpdasPage = () => {
                 <IconFrame />
                 <h5 className="font-bold">Informasi</h5>
               </div>
-              <InfoItem number="1" title="Kode BPDAS" description="Masukkan kode Balai Pengelolaan Daerah Aliran Sungai dan Hutan Lindung (BPDAS) yang sesuai." />
-              <InfoItem number="2" title="Nama BPDAS" description="Masukkan Nama Balai Pengelolaan Daerah Aliran Sungai dan Hutan Lindung (BPDAS) yang sesuai." />
-              <InfoItem number="3" title="Provinsi" description="Pilih nama provinsi tempat BPDAS berada." />
+              <InfoItem number="1" title="Kode BPTH" description="Masukkan kode Balai Pengelolaan Tanaman Hutan yang sesuai." />
+              <InfoItem number="2" title="Nama BPTH" description="Masukkan Nama Balai Pengelolaan Tanaman Hutan yang sesuai." />
+              <InfoItem number="3" title="Provinsi" description="Pilih nama provinsi tempat BPTH berada." />
               <InfoItem number="4" title="Alamat" description="Masukkan alamat lengkap UPTD." />
               <InfoItem number="5" title="Telepon" description="Masukkan nomor telepon yang dapat dihubungi untuk keperluan administrasi." />
             </div>
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormBpdasPage type="ADD" provinsiList={dataProvinsi} ref={formRef} />
+                <FormBpthPage type="ADD" provinsiList={dataProvinsi} ref={formRef} />
               </Card>
             </div>
           </CardContent>
@@ -97,4 +97,4 @@ const CreateBpdasPage = () => {
   );
 };
 
-export default CreateBpdasPage;
+export default CreateBpthPage;

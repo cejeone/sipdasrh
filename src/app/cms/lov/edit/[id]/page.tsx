@@ -4,39 +4,53 @@ import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building, Link2 } from "lucide-react";
+import { Link2 } from "lucide-react";
 import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
-import { useEffect, useRef, useState } from "react";
-import FormBpdasPage, { FormBpdasRef } from "../components/form";
-import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provinsi";
-import { ApiResponse } from "@/model/ApiResponse";
-import { AxiosInstance } from "lib/axios";
+import { FC, use, useEffect, useRef, useState } from "react";
+import FormLovPage, { FormLovRef } from "../../components/form";
+import { Lov } from "@/model/admin/lov/Lov";
+import { AxiosInstancePepdas } from "lib/axios";
 
-const CreateBpdasPage = () => {
-  const [dataProvinsi, setDataProvinsi] = useState<Provinsi[]>([]);
+type Params = {
+  id: string;
+};
+
+interface EditLovPageProps {
+  params: Promise<Params>;
+}
+
+const EditLovPage: FC<EditLovPageProps> = (props) => {
+  // setupInterceptor();
+  const { id } = use(props.params);
+
+  const formRef = useRef<FormLovRef>(null);
+
+  const [data, setData] = useState<Lov | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
+        const response = await AxiosInstancePepdas.get<Lov>(`/lov/${id}`);
+
         const responseData = response.data;
 
-        setDataProvinsi(responseData._embedded?.provinsiList);
         console.log(responseData);
+
+        setData(responseData);
+        setLoading(false);
       } catch (error: any) {
-        setError(error?.message || "Gagal mendapatkan data");
-        console.error("Fetch provinsi gagal:", error);
+        setError(error.message || "Gagal mendapatkan data");
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
-
-  const formRef = useRef<FormBpdasRef>(null);
+  }, [id]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -44,21 +58,19 @@ const CreateBpdasPage = () => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs
-              items={[{ label: "Organisasi", href: "" }, { label: "BDAS", href: "/cms/organisasi/bpdas" }, { label: "Buat Data" }]}
-            />
+            <Breadcrumbs items={[{ label: "Lov", href: "/cms/lov" }, { label: "Ubah Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Building />
-              <h1 className="text-2xl font-bold">BPDAS</h1>
+              <Link2 />
+              <h1 className="text-2xl font-bold">Lov</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
-                Tambah
+                Perbaharui
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk membuat data BPDAS</p>
+            <p className="text-sm text-base-gray">Form untuk mengubah data lov</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <ButtonSubmit onClick={() => formRef.current?.submit()} />
-            <Link href="/cms/organisasi/bpdas">
+            <Link href="/cms/lov">
               <Button variant="outline">
                 <IconCircleX /> Batal
               </Button>
@@ -78,16 +90,16 @@ const CreateBpdasPage = () => {
                 <IconFrame />
                 <h5 className="font-bold">Informasi</h5>
               </div>
-              <InfoItem number="1" title="Kode BPDAS" description="Masukkan kode Balai Pengelolaan Daerah Aliran Sungai dan Hutan Lindung (BPDAS) yang sesuai." />
-              <InfoItem number="2" title="Nama BPDAS" description="Masukkan Nama Balai Pengelolaan Daerah Aliran Sungai dan Hutan Lindung (BPDAS) yang sesuai." />
-              <InfoItem number="3" title="Provinsi" description="Pilih nama provinsi tempat BPDAS berada." />
-              <InfoItem number="4" title="Alamat" description="Masukkan alamat lengkap UPTD." />
-              <InfoItem number="5" title="Telepon" description="Masukkan nomor telepon yang dapat dihubungi untuk keperluan administrasi." />
+              <InfoItem number="1" title="Nama Kategori" description="Nama daftar LOV yang akan digunakan sebagai referensi di form lain." />
+              <InfoItem number="2" title="Nilai" description="Nilai teknis yang akan disimpan di database (biasanya dikirim ke backend)." />
+              <InfoItem number="3" title="Kelas" description="Pengelompokan LOV berdasarkan tipe/kategori sistem (bisa digunakan untuk filtering)." />
+              <InfoItem number="4" title="Deskripsi" description="Penjelasan tambahan tentang penggunaan nilai dalam konteks bisnis/proses."/>
+              <InfoItem number="5" title="Status" description="Menentukan apakah item LOV ditampilkan di form (Aktif) atau disembunyikan (Nonaktif)." />
             </div>
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormBpdasPage type="ADD" provinsiList={dataProvinsi} ref={formRef} />
+                <FormLovPage type="EDIT" ref={formRef} defaultValues={data} />
               </Card>
             </div>
           </CardContent>
@@ -97,4 +109,4 @@ const CreateBpdasPage = () => {
   );
 };
 
-export default CreateBpdasPage;
+export default EditLovPage;
