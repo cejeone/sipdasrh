@@ -12,7 +12,9 @@ import ButtonSubmit from "@/components/ButtonSubmit";
 import { FC, use, useEffect, useRef, useState } from "react";
 import FormKonfigurasiSistemPage, { FormKonfigurasiSistemRef } from "../../components/form";
 import { KonfigurasiSistem } from "@/model/admin/konfigurasi-sistem/KonfigurasiSistem";
-import { AxiosInstancePepdas } from "lib/axios";
+import { AxiosInstance } from "lib/axios";
+import { Lov, LovResponse } from "@/model/admin/lov/Lov";
+import { ApiResponse } from "@/model/ApiResponse";
 
 type Params = {
   id: string;
@@ -25,32 +27,36 @@ interface EditKonfigurasiSistemPageProps {
 const EditKonfigurasiSistemPage: FC<EditKonfigurasiSistemPageProps> = (props) => {
   // setupInterceptor();
   const { id } = use(props.params);
-
-  const formRef = useRef<FormKonfigurasiSistemRef>(null);
-
-  const [data, setData] = useState<KonfigurasiSistem | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstancePepdas.get<KonfigurasiSistem>(`/konfigurasi-sistem/${id}`);
-
-        const responseData = response.data;
-
-        console.log(responseData);
-
-        setData(responseData);
-        setLoading(false);
-      } catch (error: any) {
-        setError(error.message || "Gagal mendapatkan data");
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
+  
+    const formRef = useRef<FormKonfigurasiSistemRef>(null);
+  
+    const [data, setData] = useState<KonfigurasiSistem | null>(null);
+    const [dataLov, setDataLov] = useState<Lov[]>([]);
+  
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await AxiosInstance.get<KonfigurasiSistem>(`/konfigurasi-sistem/${id}`);
+          const responseData = response.data;
+          console.log(responseData);
+          setData(responseData);
+  
+          const responseLov = await AxiosInstance.get<ApiResponse<LovResponse>>("/provinsi");
+          const responseLovData = responseLov.data;
+          setDataLov(responseLovData._embedded?.lovList);
+  
+          setLoading(false);
+        } catch (error: any) {
+          setError(error.message || "Gagal mendapatkan data");
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [id]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -99,7 +105,7 @@ const EditKonfigurasiSistemPage: FC<EditKonfigurasiSistemPageProps> = (props) =>
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormKonfigurasiSistemPage type="EDIT" ref={formRef} defaultValues={data} />
+                <FormKonfigurasiSistemPage type="EDIT" lovList={dataLov} ref={formRef} defaultValues={data} />
               </Card>
             </div>
           </CardContent>

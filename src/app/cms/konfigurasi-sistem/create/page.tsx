@@ -9,10 +9,34 @@ import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import FormKonfigurasiSistemPage, { FormKonfigurasiSistemRef } from "../components/form";
+import { Lov, LovResponse } from "@/model/admin/lov/Lov";
+import { ApiResponse } from "@/model/ApiResponse";
+import { AxiosInstance } from "lib/axios";
+
 
 const CreateKonfigurasiSistemPage = () => {
+  const [dataLov, setDataLov] = useState<Lov[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get<ApiResponse<LovResponse>>("/lov");
+        const responseData = response.data;
+
+        setDataLov(responseData._embedded?.lovList);
+        console.log(responseData);
+      } catch (error: any) {
+        setError(error?.message || "Gagal mendapatkan data");
+        console.error("Fetch lov gagal:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const formRef = useRef<FormKonfigurasiSistemRef>(null);
 
   return (
@@ -62,7 +86,7 @@ const CreateKonfigurasiSistemPage = () => {
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormKonfigurasiSistemPage type="ADD" ref={formRef} />
+                <FormKonfigurasiSistemPage type="ADD" lovList={dataLov} ref={formRef} />
               </Card>
             </div>
           </CardContent>
