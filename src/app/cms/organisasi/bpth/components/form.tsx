@@ -7,14 +7,14 @@ import { createBpth, editBpth } from "../lib/action";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import InputField from "@/components/InputField";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Bpth } from "@/model/admin/organisasi/Bpth";
 import dynamic from "next/dynamic";
 import { Provinsi } from "@/model/admin/struktur-wilayah/Provinsi";
 import SelectCombobox from "@/components/SelectCombobox";
+import { KabupatenKota } from "@/model/admin/struktur-wilayah/KabupatenKota";
+import { Kecamatan } from "@/model/admin/struktur-wilayah/Kecamatan";
+import { KelurahanDesa } from "@/model/admin/struktur-wilayah/KelurahanDesa";
 
 const Editor = dynamic(() => import("react-simple-wysiwyg").then((mod) => mod.default), { ssr: false });
 
@@ -22,19 +22,25 @@ interface FormBpthProps {
   type?: "ADD" | "EDIT";
   defaultValues?: Bpth | null;
   provinsiList: Provinsi[];
+  kabupatenKotaList: KabupatenKota[];
+  kecamatanList: Kecamatan[];
+  kelurahanDesaList: KelurahanDesa[];
 }
 
 export interface FormBpthRef {
   submit: () => void;
 }
 
-const FormBpthPage = forwardRef<FormBpthRef, FormBpthProps>(({ type, defaultValues, provinsiList }, ref) => {
+const FormBpthPage = forwardRef<FormBpthRef, FormBpthProps>(({ type, defaultValues, provinsiList, kabupatenKotaList, kecamatanList, kelurahanDesaList }, ref) => {
   // setupInterceptor();
   const router = useRouter();
 
   const [kodeBpth, setKodeBpth] = useState("");
   const [namaBpth, setNamaBpth] = useState("");
   const [provinsiId, setProvinsiId] = useState("");
+  const [kabupatenKotaId, setKabupatenKotaId] = useState("");
+  const [kecamatanId, setKecamatanId] = useState("");
+  const [kelurahanDesaId, setKelurahanDesaId] = useState("");
   const [alamat, setAlamat] = useState("");
   const [telepon, setTelepon] = useState("");
 
@@ -44,6 +50,10 @@ const FormBpthPage = forwardRef<FormBpthRef, FormBpthProps>(({ type, defaultValu
   useEffect(() => {
     if (type == "EDIT" && defaultValues) {
       setProvinsiId(String(defaultValues?.provinsi?.id ?? ""));
+      setKabupatenKotaId(String(defaultValues?.kabupatenKota?.id ?? ""));
+      setKecamatanId(String(defaultValues?.kecamatan?.id ?? ""));
+      setKelurahanDesaId(String(defaultValues?.kelurahanDesa?.id ?? ""));
+
       setKodeBpth(defaultValues.kodeBpth || "");
       setNamaBpth(defaultValues.namaBpth || "");
       setAlamat(defaultValues.alamat || "");
@@ -75,6 +85,9 @@ const FormBpthPage = forwardRef<FormBpthRef, FormBpthProps>(({ type, defaultValu
         kodeBpth,
         namaBpth,
         provinsiId: safeNumber(provinsiId),
+        kabupatenKotaId: safeNumber(kabupatenKotaId),
+        kecamatanId: safeNumber(kecamatanId),
+        kelurahanDesaId: safeNumber(kelurahanDesaId),
         alamat,
         telepon,
       });
@@ -113,19 +126,51 @@ const FormBpthPage = forwardRef<FormBpthRef, FormBpthProps>(({ type, defaultValu
   return (
     <form ref={formRef} onSubmit={handleBpth}>
       <CardContent className="space-y-4">
-
         <InputField label="Kode BPTH" value={kodeBpth} onChange={(e) => setKodeBpth(e.target.value)} error={errors.kodeBpth} />
         <InputField label="Nama BPTH" value={namaBpth} onChange={(e) => setNamaBpth(e.target.value)} error={errors.namaBpth} />
-        
+
         <SelectCombobox
           label="Provinsi"
           value={provinsiId}
           onChange={setProvinsiId}
-          options={provinsiList.map((provinsi) => ({
-            label: provinsi.namaProvinsi,
-            value: String(provinsi.id),
+          options={provinsiList.map((prov) => ({
+            label: prov.namaProvinsi,
+            value: String(prov.id),
           }))}
-          error={errors.eselon1Id}
+          error={errors.provinsiId}
+        />
+
+        <SelectCombobox
+          label="Kabupaten / Kota"
+          value={kabupatenKotaId}
+          onChange={setKabupatenKotaId}
+          options={kabupatenKotaList.map((kab) => ({
+            label: kab.kabupatenKota,
+            value: String(kab.id),
+          }))}
+          error={errors.kabupatenKotaId}
+        />
+
+        <SelectCombobox
+          label="Kecamatan"
+          value={kecamatanId}
+          onChange={setKecamatanId}
+          options={kecamatanList.map((kec) => ({
+            label: kec.kecamatan,
+            value: String(kec.id),
+          }))}
+          error={errors.kecamatanId}
+        />
+
+        <SelectCombobox
+          label="Kelurahan / Desa"
+          value={kelurahanDesaId}
+          onChange={setKelurahanDesaId}
+          options={kelurahanDesaList.map((kel) => ({
+            label: kel.kelurahan,
+            value: String(kel.id),
+          }))}
+          error={errors.kelurahanDesaId}
         />
 
         <InputField label="Alamat" value={alamat} onChange={(e) => setAlamat(e.target.value)} error={errors.alamat} />

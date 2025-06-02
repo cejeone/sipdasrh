@@ -56,9 +56,7 @@ const DetailBpthPage: FC<DetailBpthPageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs
-              items={[{ label: "Organisasi", href: "" }, { label: "BPTH", href: "/cms/organisasi/bpth" }, { label: "Lihat Data" }]}
-            />
+            <Breadcrumbs items={[{ label: "Organisasi", href: "" }, { label: "BPTH", href: "/cms/organisasi/bpth" }, { label: "Lihat Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
               <Building />
               <h1 className="text-2xl font-bold">BPTH</h1>
@@ -106,6 +104,18 @@ const DetailBpthPage: FC<DetailBpthPageProps> = (props) => {
                     <tr>
                       <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Provinsi</td>
                       <td className="p-2 text-sm">{data.provinsi?.namaProvinsi}</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Kabupaten/Kota</td>
+                      <td className="p-2 text-sm">{data.kabupatenKota?.kabupatenKota}</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Kecamatan</td>
+                      <td className="p-2 text-sm">{data.kecamatan?.kecamatan}</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Kelurahan/Desa</td>
+                      <td className="p-2 text-sm">{data.kelurahanDesa?.kelurahan}</td>
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">Alamat</td>

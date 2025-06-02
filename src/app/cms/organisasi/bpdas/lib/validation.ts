@@ -10,4 +10,7 @@ export const bpdasFormSchema = z.object({
   telepon: z.string().min(1, { message: "Telepon wajib diisi" }).max(13, { message: "Telepon maksimal 13 karakter" }),
 
   provinsiId: z.number({ invalid_type_error: "Provinsi harus dipilih" }),
+  kabupatenKotaId: z.number({ invalid_type_error: "Kabupaten / Kota harus dipilih" }),
+  kecamatanId: z.number({ invalid_type_error: "Kecamatan harus dipilih" }),
+  kelurahanDesaId: z.number({ invalid_type_error: "Kelurahan / Desa harus dipilih" }),
 });

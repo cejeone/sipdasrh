@@ -4,7 +4,7 @@ import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building, Link2 } from "lucide-react";
+import { Building } from "lucide-react";
 import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -15,6 +15,9 @@ import { Bpth } from "@/model/admin/organisasi/Bpth";
 import { AxiosInstance } from "lib/axios";
 import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provinsi";
 import { ApiResponse } from "@/model/ApiResponse";
+import { KabupatenKota, KabupatenKotaResponse } from "@/model/admin/struktur-wilayah/KabupatenKota";
+import { Kecamatan, KecamatanResponse } from "@/model/admin/struktur-wilayah/Kecamatan";
+import { KelurahanDesa, KelurahanDesaResponse } from "@/model/admin/struktur-wilayah/KelurahanDesa";
 
 type Params = {
   id: number;
@@ -32,6 +35,9 @@ const EditBpthPage: FC<EditBpthPageProps> = (props) => {
 
   const [data, setData] = useState<Bpth | null>(null);
   const [dataProvinsi, setDataProvinsi] = useState<Provinsi[]>([]);
+  const [dataKabupatenKota, setDataKabupatenKota] = useState<KabupatenKota[]>([]);
+  const [dataKecamatan, setDataKecamatan] = useState<Kecamatan[]>([]);
+  const [dataKelurahanDesa, setDataKelurahanDesa] = useState<KelurahanDesa[]>([]);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,9 +50,21 @@ const EditBpthPage: FC<EditBpthPageProps> = (props) => {
         console.log(responseData);
         setData(responseData);
 
-        const responseProvinsi = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
-        const responseProvinsiData = responseProvinsi.data;
-        setDataProvinsi(responseProvinsiData._embedded?.provinsiList);
+        const responseProv = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
+        const responseDataProv = responseProv.data;
+        setDataProvinsi(responseDataProv._embedded?.provinsiList);
+
+        const responseKab = await AxiosInstance.get<ApiResponse<KabupatenKotaResponse>>("/kabupaten-kota");
+        const responseDataKab = responseKab.data;
+        setDataKabupatenKota(responseDataKab._embedded?.kabupatenKotaList);
+
+        const responseKec = await AxiosInstance.get<ApiResponse<KecamatanResponse>>("/kecamatan");
+        const responseDataKec = responseKec.data;
+        setDataKecamatan(responseDataKec._embedded?.kecamatanList);
+
+        const responseKel = await AxiosInstance.get<ApiResponse<KelurahanDesaResponse>>("/kelurahan-desa");
+        const responseDataKel = responseKel.data;
+        setDataKelurahanDesa(responseDataKel._embedded?.kelurahanDesaList);
 
         setLoading(false);
       } catch (error: any) {
@@ -64,9 +82,7 @@ const EditBpthPage: FC<EditBpthPageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs
-              items={[{ label: "Organisasi", href: "" }, { label: "BPTH", href: "/cms/organisasi/bpth" }, { label: "Ubah Data" }]}
-            />
+            <Breadcrumbs items={[{ label: "Organisasi", href: "" }, { label: "BPTH", href: "/cms/organisasi/bpth" }, { label: "Ubah Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
               <Building />
               <h1 className="text-2xl font-bold">BPTH</h1>
@@ -101,13 +117,24 @@ const EditBpthPage: FC<EditBpthPageProps> = (props) => {
               <InfoItem number="1" title="Kode BPTH" description="Masukkan kode Balai Pengelolaan Tanaman Hutan yang sesuai." />
               <InfoItem number="2" title="Nama BPTH" description="Masukkan Nama Balai Pengelolaan Tanaman Hutan yang sesuai." />
               <InfoItem number="3" title="Provinsi" description="Pilih nama provinsi tempat BPTH berada." />
-              <InfoItem number="4" title="Alamat" description="Masukkan alamat lengkap UPTD." />
-              <InfoItem number="5" title="Telepon" description="Masukkan nomor telepon yang dapat dihubungi untuk keperluan administrasi." />
+              <InfoItem number="4" title="Kabupaten/Kota" description="Pilih nama kabupaten/kota tempat BPTH berada." />
+              <InfoItem number="5" title="Kecamatan" description="Pilih nama kecamatan tempat BPTH berada." />
+              <InfoItem number="6" title="Kelurahan/Desa" description="Pilih nama kelurahan/desa tempat BPTH berada." />
+              <InfoItem number="7" title="Alamat" description="Masukkan alamat lengkap UPTD." />
+              <InfoItem number="8" title="Telepon" description="Masukkan nomor telepon yang dapat dihubungi untuk keperluan administrasi." />
             </div>
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormBpthPage type="EDIT" provinsiList={dataProvinsi} ref={formRef} defaultValues={data} />
+                <FormBpthPage
+                  type="EDIT"
+                  provinsiList={dataProvinsi}
+                  kabupatenKotaList={dataKabupatenKota}
+                  kecamatanList={dataKecamatan}
+                  kelurahanDesaList={dataKelurahanDesa}
+                  ref={formRef}
+                  defaultValues={data}
+                />
               </Card>
             </div>
           </CardContent>

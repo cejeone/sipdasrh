@@ -4,7 +4,7 @@ import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building, Link2 } from "lucide-react";
+import { Building } from "lucide-react";
 import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -15,6 +15,9 @@ import { Bpdas } from "@/model/admin/organisasi/Bpdas";
 import { AxiosInstance } from "lib/axios";
 import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provinsi";
 import { ApiResponse } from "@/model/ApiResponse";
+import { KabupatenKota, KabupatenKotaResponse } from "@/model/admin/struktur-wilayah/KabupatenKota";
+import { Kecamatan, KecamatanResponse } from "@/model/admin/struktur-wilayah/Kecamatan";
+import { KelurahanDesa, KelurahanDesaResponse } from "@/model/admin/struktur-wilayah/KelurahanDesa";
 
 type Params = {
   id: number;
@@ -29,9 +32,11 @@ const EditBpdasPage: FC<EditBpdasPageProps> = (props) => {
   const { id } = use(props.params);
 
   const formRef = useRef<FormBpdasRef>(null);
-
-  const [data, setData] = useState<Bpdas | null>(null);
   const [dataProvinsi, setDataProvinsi] = useState<Provinsi[]>([]);
+  const [dataKabupatenKota, setDataKabupatenKota] = useState<KabupatenKota[]>([]);
+  const [dataKecamatan, setDataKecamatan] = useState<Kecamatan[]>([]);
+  const [dataKelurahanDesa, setDataKelurahanDesa] = useState<KelurahanDesa[]>([]);
+  const [data, setData] = useState<Bpdas | null>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,9 +49,21 @@ const EditBpdasPage: FC<EditBpdasPageProps> = (props) => {
         console.log(responseData);
         setData(responseData);
 
-        const responseProvinsi = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
-        const responseProvinsiData = responseProvinsi.data;
-        setDataProvinsi(responseProvinsiData._embedded?.provinsiList);
+        const responseProv = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
+        const responseDataProv = responseProv.data;
+        setDataProvinsi(responseDataProv._embedded?.provinsiList);
+
+        const responseKab = await AxiosInstance.get<ApiResponse<KabupatenKotaResponse>>("/kabupaten-kota");
+        const responseDataKab = responseKab.data;
+        setDataKabupatenKota(responseDataKab._embedded?.kabupatenKotaList);
+
+        const responseKec = await AxiosInstance.get<ApiResponse<KecamatanResponse>>("/kecamatan");
+        const responseDataKec = responseKec.data;
+        setDataKecamatan(responseDataKec._embedded?.kecamatanList);
+
+        const responseKel = await AxiosInstance.get<ApiResponse<KelurahanDesaResponse>>("/kelurahan-desa");
+        const responseDataKel = responseKel.data;
+        setDataKelurahanDesa(responseDataKel._embedded?.kelurahanDesaList);
 
         setLoading(false);
       } catch (error: any) {
@@ -64,9 +81,7 @@ const EditBpdasPage: FC<EditBpdasPageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs
-              items={[{ label: "Organisasi", href: "" }, { label: "BPDAS", href: "/cms/organisasi/bpdas" }, { label: "Ubah Data" }]}
-            />
+            <Breadcrumbs items={[{ label: "Organisasi", href: "" }, { label: "BPDAS", href: "/cms/organisasi/bpdas" }, { label: "Ubah Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
               <Building />
               <h1 className="text-2xl font-bold">BPDAS</h1>
@@ -107,7 +122,15 @@ const EditBpdasPage: FC<EditBpdasPageProps> = (props) => {
 
             <div className="col-span-12 lg:col-span-6">
               <Card>
-                <FormBpdasPage type="EDIT" provinsiList={dataProvinsi} ref={formRef} defaultValues={data} />
+                <FormBpdasPage
+                  type="EDIT"
+                  provinsiList={dataProvinsi}
+                  kabupatenKotaList={dataKabupatenKota}
+                  kecamatanList={dataKecamatan}
+                  kelurahanDesaList={dataKelurahanDesa}
+                  ref={formRef}
+                  defaultValues={data}
+                />
               </Card>
             </div>
           </CardContent>
