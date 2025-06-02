@@ -4,16 +4,13 @@ import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronLeft, Link2 } from "lucide-react";
-import InfoItem from "@/components/InfoItem";
+import { ChevronLeft, Link2, List } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import ButtonSubmit from "@/components/ButtonSubmit";
 import { FC, use, useEffect, useRef, useState } from "react";
-import FormLovPage, { FormLovRef } from "../../components/form";
-import { Lov } from "@/model/admin/lov/Lov";
-import { AxiosInstancePepdas } from "lib/axios";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FormLovRef } from "../../components/form";
+import { Lov } from "@/model/admin/Lov";
+import { AxiosInstance } from "lib/axios";
 
 type Params = {
   id: string;
@@ -36,7 +33,7 @@ const DetailLovPage: FC<DetailLovPageProps> = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstancePepdas.get<Lov>(`/lov/${id}`);
+        const response = await AxiosInstance.get<Lov>(`/lovs/${id}`);
 
         const responseData = response.data;
 
@@ -59,15 +56,15 @@ const DetailLovPage: FC<DetailLovPageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[{ label: "Lov", href: "/cms/lov" }, { label: "Lihat Data" }]} />
+            <Breadcrumbs items={[{ label: "LOV", href: "/cms/lov" }, { label: "Lihat Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Link2 />
-              <h1 className="text-2xl font-bold">Lov</h1>
+              <List />
+              <h1 className="text-2xl font-bold">LOV</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Detail
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk melihat data lov</p>
+            <p className="text-sm text-base-gray">Form untuk melihat data list of value</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <Link href="/cms/lov">

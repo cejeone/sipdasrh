@@ -4,7 +4,7 @@ import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link2 } from "lucide-react";
+import { List } from "lucide-react";
 import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -21,15 +21,15 @@ const CreateLovPage = () => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[{ label: "Lov", href: "/cms/lov" }, { label: "Buat Data" }]} />
+            <Breadcrumbs items={[{ label: "LOV", href: "/cms/lov" }, { label: "Buat Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Link2 />
-              <h1 className="text-2xl font-bold">Lov</h1>
+              <List />
+              <h1 className="text-2xl font-bold">LOV</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Tambah
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk membuat data lov</p>
+            <p className="text-sm text-base-gray">Form untuk membuat data list of value</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <ButtonSubmit onClick={() => formRef.current?.submit()} />
@@ -56,7 +56,7 @@ const CreateLovPage = () => {
               <InfoItem number="1" title="Nama Kategori" description="Nama daftar LOV yang akan digunakan sebagai referensi di form lain." />
               <InfoItem number="2" title="Nilai" description="Nilai teknis yang akan disimpan di database (biasanya dikirim ke backend)." />
               <InfoItem number="3" title="Kelas" description="Pengelompokan LOV berdasarkan tipe/kategori sistem (bisa digunakan untuk filtering)." />
-              <InfoItem number="4" title="Deskripsi" description="Penjelasan tambahan tentang penggunaan nilai dalam konteks bisnis/proses."/>
+              <InfoItem number="4" title="Deskripsi" description="Penjelasan tambahan tentang penggunaan nilai dalam konteks bisnis/proses." />
               <InfoItem number="5" title="Status" description="Menentukan apakah item LOV ditampilkan di form (Aktif) atau disembunyikan (Nonaktif)." />
             </div>
 

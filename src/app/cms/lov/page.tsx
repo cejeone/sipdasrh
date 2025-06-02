@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import {
   ColumnFiltersState,
-  SortingState,
   VisibilityState,
   getCoreRowModel,
   getFilteredRowModel,
@@ -15,7 +14,7 @@ import {
 
 import { columns } from "./components/columns";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2 } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, List } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,10 +34,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Lov, LovResponse } from "@/model/admin/lov/Lov";
+import { Lov, LovResponse } from "@/model/admin/Lov";
 import { ApiResponse } from "@/model/ApiResponse";
 import useSWR from "swr";
-import { fetcherPepdas } from "lib/fetcher";
+import { fetcherPepdas, fetcherSuperadmin } from "lib/fetcher";
 import { deleteLov } from "./lib/action";
 import { toast } from "sonner";
 
@@ -53,10 +52,10 @@ export default function LovPage() {
     if (searchBy && searchValue) {
       params.set(searchBy, searchValue);
     }
-    return `/lov?${params.toString()}`;
+    return `/lovs?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
-  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<LovResponse>>(swrKey, fetcherPepdas);
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<LovResponse>>(swrKey, fetcherSuperadmin);
 
   const lovList: Lov[] = currentData?._embedded?.lovList ?? [];
   const totalPages = currentData?.page?.totalPages ?? 1;
@@ -116,12 +115,12 @@ export default function LovPage() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[]} />
+              <Breadcrumbs items={[{ label: "LOV", href: "" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <Link2 />
-                <h1 className="text-2xl font-bold ">Lov</h1>
+                <List />
+                <h1 className="text-2xl font-bold ">LOV</h1>
               </div>
-              <p className="text-sm text-base-gray">Informasi terkait data lov</p>
+              <p className="text-sm text-base-gray">Informasi terkait data list of value</p>
             </div>
             <Link href="lov/create">
               <Button variant="green">
