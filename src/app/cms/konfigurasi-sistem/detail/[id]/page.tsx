@@ -98,7 +98,7 @@ const DetailKonfigurasiSistemPage: FC<DetailKonfigurasiSistemPageProps> = (props
                   <tbody>
                     <tr>
                       <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Tipe</td>
-                      <td className="p-2 text-sm">{data.tipe}</td>
+                      <td className="p-2 text-sm">{data.lov?.namaKategori}</td>
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">Key</td>

@@ -1,6 +1,9 @@
+import { Lov } from "../lov/Lov";
+
 export interface KonfigurasiSistem {
   id: string;
-  tipe: string;
+  lovId: number;
+  lov?: Lov;
   key: string;
   value: string;
   deskripsi: string;

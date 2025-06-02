@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const integrasiFormSchema = z.object({
-  tipe: z.string().min(1, { message: "Tipe wajib diisi" }).max(255, { message: "Tipe maksimal 255 karakter" }),
+  lovId: z.number({ invalid_type_error: "Tipe harus dipilih" }),
 
   key: z.string().min(1, { message: "Key wajib diisi" }).max(255, { message: "Key maksimal 255 karakter" }),
 

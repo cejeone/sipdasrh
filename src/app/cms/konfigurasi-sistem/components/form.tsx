@@ -12,21 +12,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { KonfigurasiSistem } from "@/model/admin/konfigurasi-sistem/KonfigurasiSistem";
+import { Lov } from "@/model/admin/lov/Lov";
+import SelectCombobox from "@/components/SelectCombobox";
+
+
 
 interface FormKonfigurasiSistemProps {
   type?: "ADD" | "EDIT";
   defaultValues?: KonfigurasiSistem | null;
+  lovList: Lov[];
+  
 }
 
 export interface FormKonfigurasiSistemRef {
   submit: () => void;
 }
 
-const FormKonfigurasiSistemPage = forwardRef<FormKonfigurasiSistemRef, FormKonfigurasiSistemProps>(({ type, defaultValues }, ref) => {
+const FormKonfigurasiSistemPage = forwardRef<FormKonfigurasiSistemRef, FormKonfigurasiSistemProps>(({ type, defaultValues, lovList }, ref) => {
   // setupInterceptor();
   const router = useRouter();
 
-  const [tipe, setTipe] = useState("");
+  const [lovId, setLovId] = useState("");
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
@@ -38,7 +44,7 @@ const FormKonfigurasiSistemPage = forwardRef<FormKonfigurasiSistemRef, FormKonfi
 
   useEffect(() => {
     if (type == "EDIT" && defaultValues) {
-      setTipe(defaultValues.tipe || "");
+      setLovId(String(defaultValues?.lov?.id ?? ""));
       setKey(defaultValues.key || "");
       setValue(defaultValues.value || "");
       setDeskripsi(defaultValues.deskripsi || "");
@@ -63,9 +69,11 @@ const FormKonfigurasiSistemPage = forwardRef<FormKonfigurasiSistemRef, FormKonfi
   const handleKonfigurasiSistem = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const safeNumber = (value: string) => (value.trim() === "" ? undefined : Number(value));
+
     try {
       const validation = integrasiFormSchema.safeParse({
-        tipe,
+        lovId: safeNumber(lovId),
         key,
         value,
         deskripsi,
@@ -106,7 +114,16 @@ const FormKonfigurasiSistemPage = forwardRef<FormKonfigurasiSistemRef, FormKonfi
   return (
     <form ref={formRef} onSubmit={handleKonfigurasiSistem}>
       <CardContent className="space-y-4">
-        <InputField label="Tipe" value={tipe} onChange={(e) => setTipe(e.target.value)} error={errors.tipe} />
+        <SelectCombobox
+          label="Tipe"
+          value={lovId}
+          onChange={setLovId}
+          options={lovList.map((lov) => ({
+            label: lov.namaKategori,
+            value: String(lov.id),
+          }))}
+          error={errors.lovId}
+        />
         <InputField label="Key" value={key} onChange={(e) => setKey(e.target.value)} error={errors.key} />
         <InputField label="Value" value={value} onChange={(e) => setValue(e.target.value)} error={errors.value} />
 
