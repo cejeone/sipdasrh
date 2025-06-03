@@ -31,7 +31,7 @@ export default function SelectCombobox({ label, value, onChange, options, error,
       {label && <label className="text-secondary-green mb-2 text-sm font-bold">{label}</label>}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" role="combobox" aria-expanded={open} className={cn("w-full justify-between", error && "border-red-500")}>
+          <Button variant="outline" role="combobox" aria-expanded={open} className={cn("w-full justify-between", error && "border-base-destructive")}>
             {selected?.label || placeholder}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -58,7 +58,7 @@ export default function SelectCombobox({ label, value, onChange, options, error,
           </Command>
         </PopoverContent>
       </Popover>
-      {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+      {error && <p className="text-base-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }

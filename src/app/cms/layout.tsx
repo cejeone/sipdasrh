@@ -26,6 +26,8 @@ import {
   List,
   FileLock2,
   Link2,
+  UserSquare,
+  Building2,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -156,8 +158,8 @@ const sidebarItems = [
         icon: <IconTransformPoint className="w-4 h-4" />,
         url: "",
         submenus: [
-          { name: "Pelaku Usaha", url: "/masterdata/pelaku-usaha", icon: <Clipboard className="w-4 h-4" /> },
-          { name: "Kelompok Masyarakat", url: "/masterdata/kelompok-masyarakat", icon: <FileSpreadsheet className="w-4 h-4" /> },
+          { name: "Pelaku Usaha", url: "/masterdata/pelaku-usaha", icon: <Building2 className="w-4 h-4" /> },
+          { name: "Kelompok Masyarakat", url: "/masterdata/kelompok-masyarakat", icon: <UserSquare className="w-4 h-4" /> },
           // {
           //   name: "Struktur Wilayah",
           //   url: "/masterdata/struktur-wilayah",

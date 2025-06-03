@@ -4,30 +4,51 @@ import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserSquare2 } from "lucide-react";
+import { Building } from "lucide-react";
 import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
-import { useEffect, useRef, useState } from "react";
-import FormKelompokMasyarakatPage, { FormKelompokMasyarakatRef } from "../components/form";
+import { FC, use, useEffect, useRef, useState } from "react";
+import FormKelompokMasyarakatPage, { FormKelompokMasyarakatRef } from "../../components/form";
+import { KelompokMasyarakat } from "@/model/admin/masterdata/KelompokMasyarakat";
+import { AxiosInstance } from "lib/axios";
 import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provinsi";
 import { ApiResponse } from "@/model/ApiResponse";
-import { AxiosInstance } from "lib/axios";
 import { KabupatenKota, KabupatenKotaResponse } from "@/model/admin/struktur-wilayah/KabupatenKota";
 import { Kecamatan, KecamatanResponse } from "@/model/admin/struktur-wilayah/Kecamatan";
 import { KelurahanDesa, KelurahanDesaResponse } from "@/model/admin/struktur-wilayah/KelurahanDesa";
 
-const CreateKelompokMasyarakatPage = () => {
+type Params = {
+  id: number;
+};
+
+interface EditKelompokMasyarakatPageProps {
+  params: Promise<Params>;
+}
+
+const EditKelompokMasyarakatPage: FC<EditKelompokMasyarakatPageProps> = (props) => {
+  // setupInterceptor();
+  const { id } = use(props.params);
+
+  const formRef = useRef<FormKelompokMasyarakatRef>(null);
   const [dataProvinsi, setDataProvinsi] = useState<Provinsi[]>([]);
   const [dataKabupatenKota, setDataKabupatenKota] = useState<KabupatenKota[]>([]);
   const [dataKecamatan, setDataKecamatan] = useState<Kecamatan[]>([]);
   const [dataKelurahanDesa, setDataKelurahanDesa] = useState<KelurahanDesa[]>([]);
+  const [data, setData] = useState<KelompokMasyarakat | null>(null);
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const response = await AxiosInstance.get<KelompokMasyarakat>(`/kelompok-masyarakat/${id}`);
+        const responseData = response.data;
+        console.log(responseData);
+        setData(responseData);
+
         const responseProv = await AxiosInstance.get<ApiResponse<ProvinsiResponse>>("/provinsi");
         const responseDataProv = responseProv.data;
         setDataProvinsi(responseDataProv._embedded?.provinsiList);
@@ -44,17 +65,15 @@ const CreateKelompokMasyarakatPage = () => {
         const responseDataKel = responseKel.data;
         setDataKelurahanDesa(responseDataKel._embedded?.kelurahanDesaList);
 
-        // console.log(responseData);
+        setLoading(false);
       } catch (error: any) {
-        setError(error?.message || "Gagal mendapatkan data");
-        console.error("Fetch provinsi gagal:", error);
+        setError(error.message || "Gagal mendapatkan data");
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
-
-  const formRef = useRef<FormKelompokMasyarakatRef>(null);
+  }, [id]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -62,15 +81,15 @@ const CreateKelompokMasyarakatPage = () => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "Kelompok Masyarakat", href: "/cms/masterdata/kelompok-masyarakat" }, { label: "Buat Data" }]} />
+            <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "Kelompok Masyarakat", href: "/cms/masterdata/kelompok-masyarakat" }, { label: "Ubah Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
-              <UserSquare2 />
+              <Building />
               <h1 className="text-2xl font-bold">Kelompok Masyarakat</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
-                Tambah
+                Perbaharui
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk membuat data kelompok masyarakat</p>
+            <p className="text-sm text-base-gray">Form untuk mengubah data kelompok masyarakat</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <ButtonSubmit onClick={() => formRef.current?.submit()} />
@@ -94,12 +113,6 @@ const CreateKelompokMasyarakatPage = () => {
                 <IconFrame />
                 <h5 className="font-bold">Informasi</h5>
               </div>
-              <InfoItem number="1" title="Nama Kelompok Masyarakat" description="Masukkan nama kelompok masyarakat yang menerima bantuan pembibitan." />
-              <InfoItem
-                number="2"
-                title="Nomor SK Penetapan"
-                description="Masukkan nomor Surat Keputusan (SK) resmi yang menetapkan kelompok masyarakat sebagai penerima program."
-              />
               <InfoItem number="3" title="Tanggal SK Penetapan" description="Pilih tanggal diterbitkannya Surat Keputusan (SK) penetapan kelompok masyarakat." />
               <InfoItem number="4" title="Provinsi" description="Pilih nama provinsi tempat kelompok tani berlokasi." />
               <InfoItem number="5" title="Kabupaten/Kota" description="Pilih nama kabupaten atau kota tempat kelompok tani berada dari daftar yang tersedia." />
@@ -112,12 +125,13 @@ const CreateKelompokMasyarakatPage = () => {
             <div className="col-span-12 lg:col-span-6">
               <Card>
                 <FormKelompokMasyarakatPage
-                  type="ADD"
+                  type="EDIT"
                   provinsiList={dataProvinsi}
                   kabupatenKotaList={dataKabupatenKota}
                   kecamatanList={dataKecamatan}
                   kelurahanDesaList={dataKelurahanDesa}
                   ref={formRef}
+                  defaultValues={data}
                 />
               </Card>
             </div>
@@ -128,4 +142,4 @@ const CreateKelompokMasyarakatPage = () => {
   );
 };
 
-export default CreateKelompokMasyarakatPage;
+export default EditKelompokMasyarakatPage;
