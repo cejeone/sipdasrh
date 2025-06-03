@@ -13,7 +13,7 @@ export const createLov = async (lovData: any) => {
   }
 };
 
-export const editLov = async (lovData: any, id: string) => {
+export const editLov = async (lovData: any, id: number) => {
   try {
     const response = await AxiosInstance.put(`/lovs/${id}`, lovData, {
       headers: {
@@ -26,7 +26,7 @@ export const editLov = async (lovData: any, id: string) => {
   }
 };
 
-export const detailLov = async (lovData: any, id: string) => {
+export const detailLov = async (lovData: any, id: number) => {
   try {
     const response = await AxiosInstance.get(`/lovs/${id}`, lovData);
     return response.data;
@@ -35,7 +35,7 @@ export const detailLov = async (lovData: any, id: string) => {
   }
 };
 
-export const deleteLov = async (id: string) => {
+export const deleteLov = async (id: number) => {
   try {
     const response = await AxiosInstance.delete(`/lovs/${id}`);
     return response.data;

@@ -6,10 +6,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dokumen } from "@/model/rh/Dokumen";
 import Delete from "./delete";
 import { mutate } from "swr";
-import { Lov } from "@/model/admin/lov/Lov";
+import { Lov } from "@/model/admin/Lov";
 
 export const columns: ColumnDef<Lov>[] = [
   {

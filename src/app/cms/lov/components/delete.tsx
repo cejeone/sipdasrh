@@ -17,7 +17,7 @@ import { deleteLov } from "../lib/action";
 import { toast } from "sonner";
 
 interface Props {
-  id: string;
+  id: number;
   mutateLov: () => void;
 }
 

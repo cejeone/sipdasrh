@@ -37,7 +37,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Lov, LovResponse } from "@/model/admin/Lov";
 import { ApiResponse } from "@/model/ApiResponse";
 import useSWR from "swr";
-import { fetcherPepdas, fetcherSuperadmin } from "lib/fetcher";
+import { fetcherSuperadmin } from "lib/fetcher";
 import { deleteLov } from "./lib/action";
 import { toast } from "sonner";
 
@@ -79,7 +79,7 @@ export default function LovPage() {
     },
     manualPagination: true,
     onRowSelectionChange: setSelectedRowIds,
-    getRowId: (row) => row.id,
+    getRowId: (row: Lov) => row.id.toString(),
     getPaginationRowModel: getPaginationRowModel(),
     enableRowSelection: true,
     enableMultiRowSelection: true,
