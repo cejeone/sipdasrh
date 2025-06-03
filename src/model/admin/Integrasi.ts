@@ -1,10 +1,13 @@
+import { Lov } from "./Lov";
+
 export interface Integrasi {
-  id: string;
+  id: number;
   url: string;
   apiKey: string;
   tipe: string;
   deskripsi: string;
-  status: string;
+  statusId: number;
+  status?: Lov;
 }
 
 export interface IntegrasiResponse {

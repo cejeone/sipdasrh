@@ -1,19 +1,15 @@
 "use client";
 
-import { IconCircleX, IconFrame } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronLeft, Link2 } from "lucide-react";
-import InfoItem from "@/components/InfoItem";
+import { ChevronLeft, LinkIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import ButtonSubmit from "@/components/ButtonSubmit";
 import { FC, use, useEffect, useRef, useState } from "react";
-import FormIntegrasiPage, { FormIntegrasiRef } from "../../components/form";
-import { Integrasi } from "@/model/admin/integrasi/Integrasi";
-import { AxiosInstancePepdas } from "lib/axios";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Integrasi } from "@/model/admin/Integrasi";
+import { AxiosInstance } from "lib/axios";
+import { FormIntegrasiRef } from "../../components/form";
 
 type Params = {
   id: string;
@@ -36,7 +32,7 @@ const DetailIntegrasiPage: FC<DetailIntegrasiPageProps> = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstancePepdas.get<Integrasi>(`/integrasi/${id}`);
+        const response = await AxiosInstance.get<Integrasi>(`/integrasi/${id}`);
 
         const responseData = response.data;
 
@@ -61,7 +57,7 @@ const DetailIntegrasiPage: FC<DetailIntegrasiPageProps> = (props) => {
           <div>
             <Breadcrumbs items={[{ label: "Integrasi", href: "/cms/integrasi" }, { label: "Lihat Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Link2 />
+              <LinkIcon />
               <h1 className="text-2xl font-bold">Integrasi</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Detail
@@ -114,7 +110,7 @@ const DetailIntegrasiPage: FC<DetailIntegrasiPageProps> = (props) => {
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">Status</td>
-                      <td className="p-2 text-sm">{data.status}</td>
+                      <td className="p-2 text-sm">{data.status?.nilai}</td>
                     </tr>
                   </tbody>
                 </table>
