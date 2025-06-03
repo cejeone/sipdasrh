@@ -3,36 +3,36 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building, ChevronLeft, UserSquare } from "lucide-react";
+import { ChevronLeft, UserSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { FC, use, useEffect, useRef, useState } from "react";
-import { FormKelompokMasyarakatRef } from "../../components/form";
-import { KelompokMasyarakat } from "@/model/admin/masterdata/KelompokMasyarakat";
+import { FormPelakuUsahaRef } from "../../components/form";
+import { PelakuUsaha } from "@/model/admin/masterdata/PelakuUsaha";
 import { AxiosInstance } from "lib/axios";
 
 type Params = {
   id: string;
 };
 
-interface DetailKelompokMasyarakatPageProps {
+interface DetailPelakuUsahaPageProps {
   params: Promise<Params>;
 }
 
-const DetailKelompokMasyarakatPage: FC<DetailKelompokMasyarakatPageProps> = (props) => {
+const DetailPelakuUsahaPage: FC<DetailPelakuUsahaPageProps> = (props) => {
   // setupInterceptor();
   const { id } = use(props.params);
 
-  const formRef = useRef<FormKelompokMasyarakatRef>(null);
+  const formRef = useRef<FormPelakuUsahaRef>(null);
 
-  const [data, setData] = useState<KelompokMasyarakat | null>(null);
+  const [data, setData] = useState<PelakuUsaha | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get<KelompokMasyarakat>(`/kelompok-masyarakat/${id}`);
+        const response = await AxiosInstance.get<PelakuUsaha>(`/pelaku-usaha/${id}`);
 
         const responseData = response.data;
 
@@ -55,18 +55,18 @@ const DetailKelompokMasyarakatPage: FC<DetailKelompokMasyarakatPageProps> = (pro
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "Kelompok Masyarakat", href: "/cms/masterdata/kelompok-masyarakat" }, { label: "Lihat Data" }]} />
+            <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "Pelaku Usaha", href: "/cms/masterdata/pelaku-usaha" }, { label: "Lihat Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
               <UserSquare />
-              <h1 className="text-2xl font-bold">Kelompok Masyarakat</h1>
+              <h1 className="text-2xl font-bold">Pelaku Usaha</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Detail
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk melihat data kelompok masyarakat</p>
+            <p className="text-sm text-base-gray">Form untuk melihat data pelaku usaha</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
-            <Link href="/cms/masterdata/kelompok-masyarakat">
+            <Link href="/cms/masterdata/pelaku-usaha">
               <Button variant="outline">
                 <ChevronLeft /> Kembali
               </Button>
@@ -93,40 +93,52 @@ const DetailKelompokMasyarakatPage: FC<DetailKelompokMasyarakatPageProps> = (pro
                 <table className="text-left">
                   <tbody>
                     <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Nama BPDAS</td>
-                      <td className="p-2 text-sm">{data.namaKelompokMasyarakat}</td>
+                      <td className="min-w-[300px] p-2 font-semibold text-base-green text-sm">Kategori Pelaku Usaha</td>
+                      <td className="p-2 text-sm">{data.kategoriPelakuUsaha?.nilai}</td>
                     </tr>
                     <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Nomor SK Penetapan</td>
-                      <td className="p-2 text-sm">{data.nomorSkPenetapan}</td>
+                      <td className="p-2 font-semibold text-base-green text-sm">Nama Badan Usaha</td>
+                      <td className="p-2 text-sm">{data.namaBadanUsaha}</td>
                     </tr>
                     <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Tanggal SK Penetapan</td>
-                      <td className="p-2 text-sm">{data.tanggalSkPenetapan}</td>
+                      <td className="p-2 font-semibold text-base-green text-sm">Nomor Induk Berusaha (NIB)</td>
+                      <td className="p-2 text-sm">{data.nomorIndukBerusahaNib}</td>
                     </tr>
                     <tr>
-                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Provinsi</td>
-                      <td className="p-2 text-sm">{data.provinsi?.namaProvinsi}</td>
+                      <td className="p-2 font-semibold text-base-green text-sm">Ruang Lingkup Usaha</td>
+                      <td className="p-2 text-sm">{data.ruangLingkupUsaha}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+
+        <Card className="border border-border p-4 mb-2 bg-card">
+          <CardContent className=" gap-4 p-0">
+            {loading ? (
+              <p className="col-span-12">Memuat data...</p>
+            ) : error ? (
+              <p className="col-span-12 text-base-destructive">{error}</p>
+            ) : data ? (
+              <div className="informasi">
+                <h5 className="text-md font-bold mb-3">Kontak</h5>
+                <hr className="mb-3" />
+
+                <table className="text-left">
+                  <tbody>
+                    <tr>
+                      <td className="min-w-[300px] p-2 font-semibold text-base-green text-sm">Nama Direktur</td>
+                      <td className="p-2 text-sm">{data.namaDirektur}</td>
                     </tr>
                     <tr>
-                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Kabupaten/Kota</td>
-                      <td className="p-2 text-sm">{data.kabupatenKota?.kabupatenKota}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Kecamatan</td>
-                      <td className="p-2 text-sm">{data.kecamatan?.kecamatan}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2 min-w-[200px] font-semibold text-base-green text-sm">Kelurahan/Desa</td>
-                      <td className="p-2 text-sm">{data.kelurahanDesa?.kelurahan}</td>
+                      <td className="p-2 font-semibold text-base-green text-sm">Nomor HP</td>
+                      <td className="p-2 text-sm">{data.nomorHpDirektur}</td>
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">Alamat</td>
                       <td className="p-2 text-sm">{data.alamat}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2 font-semibold text-base-green text-sm">Telepon</td>
-                      <td className="p-2 text-sm">{data.telepon}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -139,4 +151,4 @@ const DetailKelompokMasyarakatPage: FC<DetailKelompokMasyarakatPageProps> = (pro
   );
 };
 
-export default DetailKelompokMasyarakatPage;
+export default DetailPelakuUsahaPage;

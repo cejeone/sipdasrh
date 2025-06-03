@@ -10,9 +10,9 @@ export interface PelakuUsaha {
   nomorHpDirektur: string;
   alamat: string;
   kategoriPelakuUsahaId: number;
-  kategoriPelakuUsaha: Lov;
+  kategoriPelakuUsaha?: Lov;
 }
 
 export interface PelakuUsahaResponse {
-  kelompokMasyarakatList: PelakuUsaha[];
+  pelakuUsahaList: PelakuUsaha[];
 }

@@ -32,7 +32,7 @@ export const columns: ColumnDef<PelakuUsaha>[] = [
     },
   },
   {
-    accessorKey: "namaPelakuUsaha",
+    accessorKey: "namaBadanUsaha",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         NAMA <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -40,18 +40,26 @@ export const columns: ColumnDef<PelakuUsaha>[] = [
     ),
   },
   {
-    accessorKey: "nomorSkPenetapan",
+    accessorKey: "nomorIndukBerusahaNib",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        SK PENETAPAN <ArrowUpDown className="ml-2 h-4 w-4" />
+        NIB <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
   },
   {
-    accessorKey: "tanggalSkPenetapan",
+    accessorKey: "namaDirektur",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        TANGGAL SK <ArrowUpDown className="ml-2 h-4 w-4" />
+        DIREKTUR <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "kategoriPelakuUsaha.nilai",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        KATEGORI <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
   },
@@ -80,7 +88,7 @@ export const columns: ColumnDef<PelakuUsaha>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Delete id={id} mutatePelakuUsaha={() => mutate("/kelompok-masyarakat")} />
+              <Delete id={id} mutatePelakuUsaha={() => mutate("/pelaku-usaha")} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

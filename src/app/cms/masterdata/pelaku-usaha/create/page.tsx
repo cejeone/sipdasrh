@@ -20,7 +20,7 @@ const CreatePelakuUsahaPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseLov = await AxiosInstance.get<ApiResponse<LovResponse>>("/lovs");
+        const responseLov = await AxiosInstance.get<ApiResponse<LovResponse>>("/lovs?namaKategori=PELAKU_USAHA");
         const responseDataLov = responseLov.data;
         setKategoriPelakuUsaha(responseDataLov._embedded?.lovList);
 

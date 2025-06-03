@@ -82,7 +82,7 @@ const FormPelakuUsahaPage = forwardRef<FormPelakuUsahaRef, FormPelakuUsahaProps>
         namaDirektur,
         nomorHpDirektur,
         alamat,
-        kategoriPelakuUsahaIdId: safeNumber(kategoriPelakuUsahaId),
+        kategoriPelakuUsahaId: safeNumber(kategoriPelakuUsahaId),
       });
 
       if (!validation.success) {
@@ -140,7 +140,7 @@ const FormPelakuUsahaPage = forwardRef<FormPelakuUsahaRef, FormPelakuUsahaProps>
                   value={kategoriPelakuUsahaId}
                   onChange={setKategoriPelakuUsahaId}
                   options={lovList.map((lov) => ({
-                    label: lov.namaKategori,
+                    label: lov.nilai,
                     value: String(lov.id),
                   }))}
                   error={errors.kategoriPelakuUsahaId}

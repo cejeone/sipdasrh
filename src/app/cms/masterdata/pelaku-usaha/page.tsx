@@ -14,7 +14,7 @@ import {
 
 import { columns } from "./components/columns";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, UserSquare2, Building2 } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Building2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,15 +57,17 @@ export default function PelakuUsahaPage() {
 
   const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<PelakuUsahaResponse>>(swrKey, fetcherSuperadmin);
 
-  const kelompokMasyarakatList: PelakuUsaha[] = currentData?._embedded?.kelompokMasyarakatList ?? [];
+  const pelakuUsahaList: PelakuUsaha[] = currentData?._embedded?.pelakuUsahaList ?? [];
   const totalPages = currentData?.page?.totalPages ?? 1;
   const totalElements = currentData?.page?.totalElements ?? 0;
+
+  console.log(pelakuUsahaList);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
   const table = useReactTable({
-    data: kelompokMasyarakatList,
+    data: pelakuUsahaList,
     columns,
     pageCount: totalPages,
     state: {
