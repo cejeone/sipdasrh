@@ -14,7 +14,7 @@ import {
 
 import { columns } from "./components/columns";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, UserSquare2, Building2 } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Building } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +52,7 @@ export default function InstitusiPage() {
     if (searchBy && searchValue) {
       params.set(searchBy, searchValue);
     }
-    return `/pelaku-usaha?${params.toString()}`;
+    return `/institusi?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
   const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<InstitusiResponse>>(swrKey, fetcherSuperadmin);
@@ -115,9 +115,9 @@ export default function InstitusiPage() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[]} />
+              <Breadcrumbs items={[{ label: "Institusi", href: "" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <Building2 />
+                <Building />
                 <h1 className="text-2xl font-bold ">Institusi</h1>
               </div>
               <p className="text-sm text-base-gray">Informasi terkait data institusi</p>
