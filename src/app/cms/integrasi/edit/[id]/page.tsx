@@ -1,18 +1,18 @@
 "use client";
 
-import { IconCircleX, IconFrame } from "@tabler/icons-react";
+import { IconCircleX } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Link2 } from "lucide-react";
-import InfoItem from "@/components/InfoItem";
+import { LinkIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
 import { FC, use, useEffect, useRef, useState } from "react";
 import FormIntegrasiPage, { FormIntegrasiRef } from "../../components/form";
-import { Integrasi } from "@/model/admin/integrasi/Integrasi";
-import { AxiosInstancePepdas } from "lib/axios";
+import { Integrasi } from "@/model/admin/Integrasi";
+import { AxiosInstance } from "lib/axios";
+import { ApiResponse } from "@/model/ApiResponse";
+import { Lov, LovResponse } from "@/model/admin/Lov";
 
 type Params = {
   id: string;
@@ -29,19 +29,22 @@ const EditIntegrasiPage: FC<EditIntegrasiPageProps> = (props) => {
   const formRef = useRef<FormIntegrasiRef>(null);
 
   const [data, setData] = useState<Integrasi | null>(null);
+  const [dataStatus, setStatus] = useState<Lov[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstancePepdas.get<Integrasi>(`/integrasi/${id}`);
-
+        const response = await AxiosInstance.get<Integrasi>(`/integrasi/${id}`);
         const responseData = response.data;
-
         console.log(responseData);
-
         setData(responseData);
+
+        const responseLov = await AxiosInstance.get<ApiResponse<LovResponse>>("/lovs?namaKategori=STATUS");
+        const responseDataLov = responseLov.data;
+        setStatus(responseDataLov._embedded?.lovList);
+
         setLoading(false);
       } catch (error: any) {
         setError(error.message || "Gagal mendapatkan data");
@@ -60,7 +63,7 @@ const EditIntegrasiPage: FC<EditIntegrasiPageProps> = (props) => {
           <div>
             <Breadcrumbs items={[{ label: "Integrasi", href: "/cms/integrasi" }, { label: "Ubah Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
-              <Link2 />
+              <LinkIcon />
               <h1 className="text-2xl font-bold">Integrasi</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Perbaharui
@@ -83,27 +86,7 @@ const EditIntegrasiPage: FC<EditIntegrasiPageProps> = (props) => {
 
       {/* Form Section */}
       <main className="overflow-auto h-full">
-        <Card className="border border-border p-4 mb-2 bg-card">
-          <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-0">
-            <div className="col-span-12 lg:col-span-6 border-r space-y-4 pl-4">
-              <div className="title text-base-green flex items-center gap-1">
-                <IconFrame />
-                <h5 className="font-bold">Informasi</h5>
-              </div>
-              <InfoItem number="1" title="URL" description="Alamat endpoint sistem atau layanan pihak ketiga yang akan dihubungkan." />
-              <InfoItem number="2" title="API Key" description="Kunci otentikasi yang digunakan untuk mengakses API secara aman." />
-              <InfoItem number="3" title="Tipe" description="Jenis koneksi atau layanan yang digunakan, seperti REST, Webhook, dll." />
-              <InfoItem number="4" title="Deskripsi" description="Penjelasan singkat mengenai tujuan atau fungsi dari konfigurasi ini."/>
-              <InfoItem number="5" title="Status" description="Menentukan status konfigurasi, misalnya Aktif atau Nonaktif." />
-            </div>
-
-            <div className="col-span-12 lg:col-span-6">
-              <Card>
-                <FormIntegrasiPage type="EDIT" ref={formRef} defaultValues={data} />
-              </Card>
-            </div>
-          </CardContent>
-        </Card>
+        <FormIntegrasiPage type="EDIT" dataStatus={dataStatus} ref={formRef} defaultValues={data} />
       </main>
     </div>
   );

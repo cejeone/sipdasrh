@@ -17,7 +17,7 @@ import { deleteIntegrasi } from "../lib/action";
 import { toast } from "sonner";
 
 interface Props {
-  id: string;
+  id: number;
   mutateIntegrasi: () => void;
 }
 

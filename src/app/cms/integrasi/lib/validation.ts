@@ -9,5 +9,5 @@ export const integrasiFormSchema = z.object({
 
   deskripsi: z.string().min(1, { message: "Deskripsi wajib diisi" }).max(500, { message: "Deskripsi maksimal 500 karakter" }),
 
-  status: z.string().min(1, { message: "Status wajib diisi" }).max(50, { message: "Status maksimal 50 karakter" }),
+  statusId: z.number({ invalid_type_error: "Status harus dipilih" }),
 });

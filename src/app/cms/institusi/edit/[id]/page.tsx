@@ -1,11 +1,9 @@
 "use client";
 
-import { IconCircleX, IconFrame } from "@tabler/icons-react";
+import { IconCircleX } from "@tabler/icons-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Building } from "lucide-react";
-import InfoItem from "@/components/InfoItem";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
@@ -17,7 +15,6 @@ import { Provinsi, ProvinsiResponse } from "@/model/admin/struktur-wilayah/Provi
 import { ApiResponse } from "@/model/ApiResponse";
 import { KabupatenKota, KabupatenKotaResponse } from "@/model/admin/struktur-wilayah/KabupatenKota";
 import { Kecamatan, KecamatanResponse } from "@/model/admin/struktur-wilayah/Kecamatan";
-import { KelurahanDesa, KelurahanDesaResponse } from "@/model/admin/struktur-wilayah/KelurahanDesa";
 import { Lov, LovResponse } from "@/model/admin/Lov";
 
 type Params = {
@@ -93,19 +90,19 @@ const EditInstitusiPage: FC<EditInstitusiPageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[{ label: "Masterdata", href: "" }, { label: "Pelaku Usaha", href: "/cms/masterdata/institusi" }, { label: "Ubah Data" }]} />
+            <Breadcrumbs items={[{ label: "Institusi", href: "/cms/institusi" }, { label: "Ubah Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
               <Building />
-              <h1 className="text-2xl font-bold">Pelaku Usaha</h1>
+              <h1 className="text-2xl font-bold">Institusi</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Perbaharui
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk mengubah data pelaku usaha</p>
+            <p className="text-sm text-base-gray">Form untuk mengubah data institusi</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <ButtonSubmit onClick={() => formRef.current?.submit()} />
-            <Link href="/cms/masterdata/institusi">
+            <Link href="/cms/institusi">
               <Button variant="outline">
                 <IconCircleX /> Batal
               </Button>
@@ -118,10 +115,17 @@ const EditInstitusiPage: FC<EditInstitusiPageProps> = (props) => {
 
       {/* Form Section */}
       <main className="overflow-auto h-full">
-        <FormInstitusiPage type="ADD" lovList={dataTipeInstitusi} dataTipeAkreditasi={dataTipeAkreditasi}
-                  dataStatus={dataStatus} provinsiList={dataProvinsi}
-                  kabupatenKotaList={dataKabupatenKota}
-                  kecamatanList={dataKecamatan} ref={formRef} defaultValues={data} />
+        <FormInstitusiPage
+          type="EDIT"
+          lovList={dataTipeInstitusi}
+          dataTipeAkreditasi={dataTipeAkreditasi}
+          dataStatus={dataStatus}
+          provinsiList={dataProvinsi}
+          kabupatenKotaList={dataKabupatenKota}
+          kecamatanList={dataKecamatan}
+          ref={formRef}
+          defaultValues={data}
+        />
       </main>
     </div>
   );

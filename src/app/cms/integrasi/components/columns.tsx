@@ -6,10 +6,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dokumen } from "@/model/rh/Dokumen";
 import Delete from "./delete";
 import { mutate } from "swr";
-import { Integrasi } from "@/model/admin/integrasi/Integrasi";
+import { Integrasi } from "@/model/admin/Integrasi";
 
 export const columns: ColumnDef<Integrasi>[] = [
   {
@@ -58,28 +57,27 @@ export const columns: ColumnDef<Integrasi>[] = [
     ),
   },
   {
-    accessorKey: "status",
+    accessorFn: (row) => row.status?.nilai,
+    id: "status", // wajib beri ID kalau pakai accessorFn
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         STATUS <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => {
-      const rawStatus = row.getValue("status");
-      const status = typeof rawStatus === "string" ? rawStatus : "Draft";
+      const status = row.getValue("status") as string;
 
-      type StatusType = "Aktif" | "Nonaktif";
-
-      const statusColor: Record<"Aktif" | "Nonaktif", string> = {
+      const statusColor: Record<"Aktif" | "Tidak aktif", string> = {
         Aktif: "bg-secondary-green text-white",
-        Nonaktif: "bg-base-destructive text-white",
+        "Tidak aktif": "bg-base-destructive text-white",
       };
 
-      const color = statusColor[status as StatusType] ?? "bg-gray-300 text-gray-800";
+      const color = statusColor[status as "Aktif" | "Tidak aktif"] ?? "bg-gray-300 text-gray-800";
 
       return <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${color}`}>{status}</span>;
     },
   },
+
   {
     id: "actions",
     header: "AKSI",

@@ -64,7 +64,7 @@ export const columns: ColumnDef<Institusi>[] = [
     ),
   },
   {
-    accessorKey: "lov.nilai",
+    accessorKey: "tipeInstitusi.nilai",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         TIPE <ArrowUpDown className="ml-2 h-4 w-4" />

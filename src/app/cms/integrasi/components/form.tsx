@@ -5,24 +5,28 @@ import { useRouter } from "next/navigation";
 import { integrasiFormSchema } from "../lib/validation";
 import { createIntegrasi, editIntegrasi } from "../lib/action";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import InputField from "@/components/InputField";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Integrasi } from "@/model/admin/integrasi/Integrasi";
+import { Integrasi } from "@/model/admin/Integrasi";
+import InfoItem from "@/components/InfoItem";
+import { IconFrame } from "@tabler/icons-react";
+import { Lov } from "@/model/admin/Lov";
+import SelectCombobox from "@/components/SelectCombobox";
 
 interface FormIntegrasiProps {
   type?: "ADD" | "EDIT";
   defaultValues?: Integrasi | null;
+  dataStatus: Lov[];
 }
 
 export interface FormIntegrasiRef {
   submit: () => void;
 }
 
-const FormIntegrasiPage = forwardRef<FormIntegrasiRef, FormIntegrasiProps>(({ type, defaultValues }, ref) => {
+const FormIntegrasiPage = forwardRef<FormIntegrasiRef, FormIntegrasiProps>(({ type, defaultValues, dataStatus }, ref) => {
   // setupInterceptor();
   const router = useRouter();
 
@@ -30,7 +34,7 @@ const FormIntegrasiPage = forwardRef<FormIntegrasiRef, FormIntegrasiProps>(({ ty
   const [apiKey, setApiKey] = useState("");
   const [tipe, setTipe] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
-  const [status, setStatus] = useState("");
+  const [statusId, setStatusId] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -42,7 +46,7 @@ const FormIntegrasiPage = forwardRef<FormIntegrasiRef, FormIntegrasiProps>(({ ty
       setApiKey(defaultValues.apiKey || "");
       setTipe(defaultValues.tipe || "");
       setDeskripsi(defaultValues.deskripsi || "");
-      setStatus(defaultValues.status || "");
+      setStatusId(String(defaultValues?.status?.id ?? ""));
     }
   }, [type, defaultValues]);
 
@@ -63,13 +67,15 @@ const FormIntegrasiPage = forwardRef<FormIntegrasiRef, FormIntegrasiProps>(({ ty
   const handleIntegrasi = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const safeNumber = (value: string) => (value.trim() === "" ? undefined : Number(value));
+
     try {
       const validation = integrasiFormSchema.safeParse({
         url,
         apiKey,
         tipe,
         deskripsi,
-        status,
+        statusId: safeNumber(statusId),
       });
 
       if (!validation.success) {
@@ -105,31 +111,48 @@ const FormIntegrasiPage = forwardRef<FormIntegrasiRef, FormIntegrasiProps>(({ ty
 
   return (
     <form ref={formRef} onSubmit={handleIntegrasi}>
-      <CardContent className="space-y-4">
-        <InputField label="URL" value={url} onChange={(e) => setUrl(e.target.value)} error={errors.url} />
-        <InputField label="API Key" value={apiKey} onChange={(e) => setApiKey(e.target.value)} error={errors.apiKey} />
-        <InputField label="Tipe" value={tipe} onChange={(e) => setTipe(e.target.value)} error={errors.tipe} />
+      <Card className="border border-border p-4 mb-2 bg-card">
+        <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-0">
+          <div className="col-span-12 lg:col-span-6 border-r space-y-4 pl-4">
+            <div className="title text-base-green flex items-center gap-1">
+              <IconFrame />
+              <h5 className="font-bold">Informasi</h5>
+            </div>
+            <InfoItem number="1" title="URL" description="Alamat endpoint sistem atau layanan pihak ketiga yang akan dihubungkan." />
+            <InfoItem number="2" title="API Key" description="Kunci otentikasi yang digunakan untuk mengakses API secara aman." />
+            <InfoItem number="3" title="Tipe" description="Jenis koneksi atau layanan yang digunakan, seperti REST, Webhook, dll." />
+            <InfoItem number="4" title="Deskripsi" description="Penjelasan singkat mengenai tujuan atau fungsi dari konfigurasi ini." />
+            <InfoItem number="5" title="Status" description="Menentukan status konfigurasi, misalnya Aktif atau Nonaktif." />
+          </div>
 
-        <div>
-          <Label className="text-secondary-green mb-2 font-bold">Deskripsi</Label>
-          <Textarea className="border-border" value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} placeholder="Masukkan Deskripsi" />
-          {errors.deskripsi && <p className="text-sm text-base-destructive mt-1">{errors.keterangan}</p>}
-        </div>
+          <div className="col-span-12 lg:col-span-6">
+            <Card>
+              <CardContent className="space-y-4">
+                <InputField label="URL" value={url} onChange={(e) => setUrl(e.target.value)} error={errors.url} />
+                <InputField label="API Key" value={apiKey} onChange={(e) => setApiKey(e.target.value)} error={errors.apiKey} />
+                <InputField label="Tipe" value={tipe} onChange={(e) => setTipe(e.target.value)} error={errors.tipe} />
 
-        <div>
-          <Label className="text-secondary-green mb-2 font-bold">Status</Label>
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-full border-border">
-              <SelectValue placeholder="Pilih salah satu" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Aktif">Aktif</SelectItem>
-              <SelectItem value="Nonaktif">Nonaktif</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.status && <p className="text-sm text-base-destructive mt-1">{errors.status}</p>}
-        </div>
-      </CardContent>
+                <div>
+                  <Label className="text-secondary-green mb-2 font-bold">Deskripsi</Label>
+                  <Textarea className="border-border" value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} placeholder="Masukkan Deskripsi" />
+                  {errors.deskripsi && <p className="text-sm text-base-destructive mt-1">{errors.keterangan}</p>}
+                </div>
+
+                <SelectCombobox
+                  label="Status"
+                  value={statusId}
+                  onChange={setStatusId}
+                  options={dataStatus.map((lov) => ({
+                    label: lov.nilai,
+                    value: String(lov.id),
+                  }))}
+                  error={errors.statusId}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
     </form>
   );
 });

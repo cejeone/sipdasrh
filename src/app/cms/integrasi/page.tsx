@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import {
   ColumnFiltersState,
-  SortingState,
   VisibilityState,
   getCoreRowModel,
   getFilteredRowModel,
@@ -15,7 +14,7 @@ import {
 
 import { columns } from "./components/columns";
 
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2 } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, LinkIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,12 +34,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Integrasi, IntegrasiResponse } from "@/model/admin/integrasi/Integrasi";
+import { Integrasi, IntegrasiResponse } from "@/model/admin/Integrasi";
 import { ApiResponse } from "@/model/ApiResponse";
 import useSWR from "swr";
-import { fetcherPepdas } from "lib/fetcher";
 import { deleteIntegrasi } from "./lib/action";
 import { toast } from "sonner";
+import { fetcherSuperadmin } from "lib/fetcher";
 
 export default function IntegrasiPage() {
   const [pageIndex, setPageIndex] = useState(0);
@@ -56,9 +55,11 @@ export default function IntegrasiPage() {
     return `/integrasi?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
-  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<IntegrasiResponse>>(swrKey, fetcherPepdas);
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<IntegrasiResponse>>(swrKey, fetcherSuperadmin);
 
   const integrasiList: Integrasi[] = currentData?._embedded?.integrasiList ?? [];
+
+  console.log(integrasiList);
   const totalPages = currentData?.page?.totalPages ?? 1;
   const totalElements = currentData?.page?.totalElements ?? 0;
 
@@ -80,7 +81,7 @@ export default function IntegrasiPage() {
     },
     manualPagination: true,
     onRowSelectionChange: setSelectedRowIds,
-    getRowId: (row) => row.id,
+    getRowId: (row: Integrasi) => row.id.toString(),
     getPaginationRowModel: getPaginationRowModel(),
     enableRowSelection: true,
     enableMultiRowSelection: true,
@@ -105,7 +106,7 @@ export default function IntegrasiPage() {
       setSelectedRowIds({});
       toast.success("Data berhasil dihapus");
     } catch (err) {
-      console.error("Gagal menghapus dokumen:", err);
+      console.error("Gagal menghapus:", err);
     }
   };
 
@@ -116,9 +117,9 @@ export default function IntegrasiPage() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[]} />
+              <Breadcrumbs items={[{ label: "Integrasi", href: "" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <Link2 />
+                <LinkIcon />
                 <h1 className="text-2xl font-bold ">Integrasi</h1>
               </div>
               <p className="text-sm text-base-gray">Informasi terkait data integrasi</p>
