@@ -1,7 +1,9 @@
-export interface Monev {
+import { Bpdas } from "../admin/organisasi/Bpdas";
+
+export interface MonevPusat {
   id: string;
   program: string;
-  bpdas: string;
+  bpdasId: Bpdas;
   totalTarget: number;
   totalRealisasi: number;
   totalT1: number;
@@ -15,8 +17,9 @@ export interface Monev {
   totalBast: number;
   realisasiBast: number;
   keterangan: string;
+  bpdas?: Bpdas;
 }
 
-export interface MonevResponse {
-  monevList: Monev[];
+export interface MonevPusatResponse {
+  monevPusatList: MonevPusat[];
 }

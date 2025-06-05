@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ButtonSubmit from "@/components/ButtonSubmit";
 import { FC, use, useEffect, useRef, useState } from "react";
-import FormMonevPage, { FormMonevRef } from "../../components/form";
-import { Monev } from "@/model/rh/Monev";
+import FormMonevPusatPage, { FormMonevPusatRef } from "../../components/form";
+import { MonevPusat } from "@/model/rh/MonevPusat";
 import { AxiosInstancePepdas } from "lib/axios";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -19,24 +19,24 @@ type Params = {
   id: string;
 };
 
-interface DetailMonevPageProps {
+interface DetailMonevPusatPageProps {
   params: Promise<Params>;
 }
 
-const DetailMonevPage: FC<DetailMonevPageProps> = (props) => {
+const DetailMonevPusatPage: FC<DetailMonevPusatPageProps> = (props) => {
   // setupInterceptor();
   const { id } = use(props.params);
 
-  const formRef = useRef<FormMonevRef>(null);
+  const formRef = useRef<FormMonevPusatRef>(null);
 
-  const [data, setData] = useState<Monev | null>(null);
+  const [data, setData] = useState<MonevPusat | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstancePepdas.get<Monev>(`/monev/${id}`);
+        const response = await AxiosInstancePepdas.get<MonevPusat>(`/monev-pusat/${id}`);
 
         const responseData = response.data;
 
@@ -59,18 +59,18 @@ const DetailMonevPage: FC<DetailMonevPageProps> = (props) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <Breadcrumbs items={[{ label: "PEPDAS", href: "" }, { label: "Monev", href: "/cms/rh/monev" }, { label: "Lihat Data" }]} />
+            <Breadcrumbs items={[{ label: "Rencana Kerja RH", href: "" }, { label: "Monev Pusat", href: "/cms/rh/monev-pusat" }, { label: "Lihat Data" }]} />
             <div className="flex items-center gap-2 text-secondary-green">
               <Link2 />
-              <h1 className="text-2xl font-bold">Monev</h1>
+              <h1 className="text-2xl font-bold">Monitoring & Evaluasi Program</h1>
               <Badge variant="secondary" className="rounded-full px-4 text-base-gray">
                 Detail
               </Badge>
             </div>
-            <p className="text-sm text-base-gray">Form untuk melihat data monev</p>
+            <p className="text-sm text-base-gray">Form untuk melihat data monev pusat</p>
           </div>
           <div className="pt-4 flex justify-end gap-2">
-            <Link href="/cms/pepdas/monev">
+            <Link href="/cms/rh/monev-pusat">
               <Button variant="outline">
                 <ChevronLeft /> Kembali
               </Button>
@@ -102,7 +102,7 @@ const DetailMonevPage: FC<DetailMonevPageProps> = (props) => {
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">BPDAS</td>
-                      <td className="p-2 text-sm">{data.bpdas}</td>
+                      <td className="p-2 text-sm">{data.bpdas?.namaBpdas}</td>
                     </tr>
                     <tr>
                       <td className="p-2 font-semibold text-base-green text-sm">Total Target</td>
@@ -167,4 +167,4 @@ const DetailMonevPage: FC<DetailMonevPageProps> = (props) => {
   );
 };
 
-export default DetailMonevPage;
+export default DetailMonevPusatPage;

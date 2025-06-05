@@ -9,9 +9,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dokumen } from "@/model/rh/Dokumen";
 import Delete from "./delete";
 import { mutate } from "swr";
-import { Monev } from "@/model/rh/Monev";
+import { MonevPusat } from "@/model/rh/MonevPusat";
 
-export const columns: ColumnDef<Monev>[] = [
+export const columns: ColumnDef<MonevPusat>[] = [
   {
     id: "select",
     header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected()} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,
@@ -41,7 +41,7 @@ export const columns: ColumnDef<Monev>[] = [
     ),
   },
   {
-    accessorKey: "bpdas",
+    accessorKey: "bpdas.namaBpdas",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         BPDAS <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -108,17 +108,17 @@ export const columns: ColumnDef<Monev>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/cms/pepdas/monev/edit/${id}`}>
+              <Link href={`/cms/rh/monev-pusat/edit/${id}`}>
                 <PencilIcon className="mr-2" /> Edit
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`/cms/pepdas/monev/detail/${id}`}>
+              <Link href={`/cms/rh/monev-pusat/detail/${id}`}>
                 <InfoIcon className="mr-2" /> Detail
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Delete id={id} mutateMonev={() => mutate("/monev")} />
+              <Delete id={id} mutateMonevPusat={() => mutate("/monev-pusat")} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

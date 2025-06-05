@@ -1,215 +1,113 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
-  SortingState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  flexRender,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  MoreHorizontal,
-  PlusCircle,
-  Settings2Icon,
-  Plus,
-  ChevronsLeft,
-  ChevronsRight,
-  InfoIcon,
-  PencilIcon,
-  Trash2Icon,
-} from "lucide-react";
-import { IconBorderOuter } from "@tabler/icons-react";
+
+import { columns } from "./components/columns";
+
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, ChevronDown, Settings2Icon, Plus, Trash2Icon, Link2, ClipboardList } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Geoservice, GeoserviceResponse } from "@/model/pepdas/Geoservice";
+import { ApiResponse } from "@/model/ApiResponse";
+import useSWR from "swr";
+import { fetcherRh } from "lib/fetcher";
+import { deleteProgram } from "./lib/action";
+import { toast } from "sonner";
+import { Program, ProgramResponse } from "@/model/rh/Program";
 
-export type Nursery = {
-  no: string;
-  kategori: string;
-  nama: string;
-  fungsi: string;
-  tahun: number;
-  anggaran: number;
-  bibit: number;
-  luas: number;
-  status: string;
-};
+export default function ProgramPage() {
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchBy, setSearchBy] = useState<string | undefined>(undefined);
+  const [searchValue, setSearchValue] = useState("");
 
-const data: Nursery[] = [
-  { no: "1", kategori: "RHL", nama: "Penghijauan DAS Serayu", fungsi: "APL", tahun: 2025, anggaran: 100000000, bibit: 300, luas: 60, status: "aktif" },
-  { no: "2", kategori: "RHL", nama: "Rehabilitasi Hutan di DAS Citarum", fungsi: "HL", tahun: 2025, anggaran: 100000000, bibit: 300, luas: 60, status: "aktif" },
-  { no: "3", kategori: "UPSA", nama: "Pengelolaan Sumber Daya Alam di Hutan Lindung", fungsi: "HL", tahun: 2025, anggaran: 100000000, bibit: 300, luas: 60, status: "aktif" },
-];
+  const swrKey = useMemo(() => {
+    const params = new URLSearchParams({ page: pageIndex.toString(), size: pageSize.toString() });
+    if (searchBy && searchValue) {
+      params.set(searchBy, searchValue);
+    }
+    return `/programs?${params.toString()}`;
+  }, [pageIndex, pageSize, searchBy, searchValue]);
 
-export const columns: ColumnDef<Nursery>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "no",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        No <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "kategori",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        KATEGORI <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "nama",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        NAMA <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "fungsi",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        FUNGSI <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "tahun",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        TAHUN <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "anggaran",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        ANGGARAN <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "bibit",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        BIBIT BTG/HA <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "luas",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        LUAS <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        STATUS <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const status = row.original.status;
-      return <span className={`text-xs font-semibold px-2 py-1 rounded-full ${status === "aktif" ? "bg-base-green text-white" : "bg-gray-100 text-gray-600"}`}>{status}</span>;
-    },
-  },
-  {
-    id: "actions",
-    accessorKey: "AKSI",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.no;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href={`/cms/ppth/administrasi/persemaian/${id}/edit`}>
-                <PencilIcon /> Edit
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={`/cms/ppth/administrasi/persemaian/${id}/detail`}>
-                <InfoIcon /> Detil
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Button variant="destructive" className="text-white w-full text-left">
-                <Trash2Icon className="text-white" /> Hapus
-              </Button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<ProgramResponse>>(swrKey, fetcherRh);
 
-export default function Program() {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const programList: Program[] = currentData?._embedded?.programList ?? [];
+  const totalPages = currentData?.page?.totalPages ?? 1;
+  const totalElements = currentData?.page?.totalElements ?? 0;
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-
+  const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
   const table = useReactTable({
-    data,
+    data: programList,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
+    pageCount: totalPages,
+    state: {
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
+      columnFilters,
+      columnVisibility,
+      rowSelection: selectedRowIds,
+    },
+    manualPagination: true,
+    onRowSelectionChange: setSelectedRowIds,
+    getRowId: (row) => row.id,
     getPaginationRowModel: getPaginationRowModel(),
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === "function" ? updater({ pageIndex, pageSize }) : updater;
+      setPageIndex(newPagination.pageIndex);
+      setPageSize(newPagination.pageSize);
+    },
+    getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
   });
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
+
+  const handleDeleteSelected = async () => {
+    try {
+      const idsToDelete = selectedRows.map((row) => row.original.id);
+      await Promise.all(idsToDelete.map((id) => deleteProgram(id)));
+      await mutate();
+      setSelectedRowIds({});
+      toast.success("Data berhasil dihapus");
+    } catch (err) {
+      console.error("Gagal menghapus dokumen:", err);
+    }
+  };
 
   return (
     <>
@@ -218,14 +116,14 @@ export default function Program() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[{ label: "RH", href: "" }, { label: "Rencana Kerja", href: "" }, { label: "Program" }]} />
+              <Breadcrumbs items={[{ label: "Rencana Kerja", href: "" }, { label: "Program" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
-                <IconBorderOuter />
+                <ClipboardList />
                 <h1 className="text-2xl font-bold ">Program</h1>
               </div>
-              <p className="text-sm text-base-gray">Informasi terkait data SPAS/ARR</p>
+              <p className="text-sm text-base-gray">Informasi terkait data program</p>
             </div>
-            <Link href="program/create/program">
+            <Link href="program/create">
               <Button variant="green">
                 <Plus />
                 Tambah Data
@@ -239,52 +137,62 @@ export default function Program() {
         <main className="overflow-auto">
           <div className="w-full">
             <div className="flex items-center justify-between py-4">
-              <div className="menu-left flex gap-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
-                      {" "}
-                      Cari berdasarkan <ChevronDown />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+              <div className="flex gap-3 items-center">
+                {/* filtering */}
+                <Select key={searchBy ?? "empty"} value={searchBy ?? undefined} onValueChange={(val) => setSearchBy(val)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Cari berdasarkan" />
+                  </SelectTrigger>
+                  <SelectContent>
                     {table
                       .getAllColumns()
-                      .filter((column) => column.getCanHide())
-                      .map((column) => (
-                        <DropdownMenuCheckboxItem
-                          key={column.id}
-                          className="capitalize"
-                          checked={column.getIsVisible()}
-                          onCheckedChange={(value) => column.toggleVisibility(!!value)}>
-                          {column.id}
-                        </DropdownMenuCheckboxItem>
+                      .filter((col) => col.getCanHide() && col.id !== "actions")
+                      .map((col) => (
+                        <SelectItem key={col.id} value={col.id}>
+                          {col.id}
+                        </SelectItem>
                       ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Input
-                  placeholder="Cari..."
-                  value={(table.getColumn("nama")?.getFilterValue() as string) ?? ""}
-                  onChange={(event) => table.getColumn("nama")?.setFilterValue(event.target.value)}
-                  className="max-w-sm"
-                />
-                <Button variant="outline" className="icon">
-                  <Settings2Icon /> Kategori
-                </Button>
-                <Button variant="outline" className="icon">
-                  <Settings2Icon /> Fungsi
-                </Button>
-                <Button variant="outline" className="icon">
-                  <Settings2Icon /> Tahun
-                </Button>
-              </div>
-              <div className="menu-right flex gap-3">
-                {selectedRows.length > 0 && (
-                  <Button variant="destructive" className="icon">
-                    <PlusCircle /> Hapus
+                  </SelectContent>
+                </Select>
+
+                <Input placeholder="Cari..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} className="max-w-sm" />
+
+                {(searchBy || searchValue) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchBy(undefined);
+                      setSearchValue("");
+                    }}>
+                    Reset
                   </Button>
                 )}
-                <Button variant="outline" className="icon">
+              </div>
+
+              <div className="menu-right flex gap-3">
+                {selectedRows.length > 0 && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="text-white text-left">
+                        <Trash2Icon className="text-white mr-2" /> Hapus
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Yakin ingin menghapus {selectedRows.length} data?</AlertDialogTitle>
+                        <AlertDialogDescription>Tindakan ini tidak dapat dibatalkan. Data akan dihapus permanen.</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction className="bg-base-destructive text-white hover:bg-destructive/90" onClick={handleDeleteSelected}>
+                          Hapus
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+
+                <Button variant="outline" className="icon ">
                   <Settings2Icon /> Status
                 </Button>
                 <DropdownMenu>
@@ -323,7 +231,13 @@ export default function Program() {
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {table.getRowModel().rows.length ? (
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="text-center h-24">
+                        Loading data...
+                      </TableCell>
+                    </TableRow>
+                  ) : table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                         {row.getVisibleCells().map((cell) => (
@@ -333,7 +247,7 @@ export default function Program() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24 text-center">
+                      <TableCell colSpan={columns.length} className="text-center h-24">
                         Tidak ditemukan data terkait.
                       </TableCell>
                     </TableRow>
@@ -342,7 +256,7 @@ export default function Program() {
               </Table>
             </div>
 
-            {/* Pagination section */}
+            {/* Pagination */}
             <div className="flex items-center justify-between py-4">
               <div className="text-sm text-muted-foreground">
                 {table.getFilteredSelectedRowModel().rows.length} dari {table.getFilteredRowModel().rows.length} baris dipilih.
@@ -350,23 +264,22 @@ export default function Program() {
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-2">
                   <span>Baris per halaman</span>
-                  <Select value={table.getState().pagination.pageSize.toString()} onValueChange={(value) => table.setPageSize(Number(value))}>
+                  <Select value={table.getState().pagination.pageSize.toString()} onValueChange={(v) => table.setPageSize(Number(v))}>
                     <SelectTrigger className="h-8 w-[70px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="30">30</SelectItem>
-                      <SelectItem value="40">40</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
+                      {[10, 20, 30, 40, 50].map((n) => (
+                        <SelectItem key={n} value={String(n)}>
+                          {n}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <span>
-                  Halaman {table.getState().pagination.pageIndex + 1} dari {table.getPageCount()}
+                  Halaman {pageIndex + 1} dari {totalPages}
                 </span>
-
                 <div className="flex items-center space-x-1">
                   <Button variant="outline" size="icon" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
                     <ChevronsLeft className="h-4 w-4" />

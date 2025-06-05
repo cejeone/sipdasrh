@@ -130,9 +130,15 @@ const sidebarItems = [
         submenus: [
           { name: "Program", url: "/rh/rencana-kerja/program", icon: <ClipboardList className="w-4 h-4" /> },
           { name: "Kegiatan", url: "/rh/rencana-kerja/kegiatan", icon: <FileSpreadsheet className="w-4 h-4" /> },
-          { name: "Monitoring & Evaluasi", url: "/rh/rencana-kerja/monitoring-evaluasi", icon: <List className="w-4 h-4" /> },
+          { name: "Monitoring & Evaluasi", url: "/rh/rencana-kerja/monev-pusat", icon: <List className="w-4 h-4" /> },
           { name: "Serah Terima", url: "/rh/rencana-kerja/serah-terima", icon: <FileLock2 className="w-4 h-4" /> },
         ],
+      },
+      {
+        title: "Bimtek",
+        icon: <File className="w-4 h-4" />,
+        url: "/rh/bimtek",
+        submenus: [],
       },
       {
         title: "Dokumen",

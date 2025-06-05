@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const monevFormSchema = z.object({
+export const monevPusatFormSchema = z.object({
   program: z.string().min(1, { message: "Direktorat wajib diisi" }).max(255, { message: "Direktorat maksimal 255 karakter" }),
-  bpdas: z.string().min(1, { message: "BPDAS wajib diisi" }).max(255, { message: "BPDAS maksimal 255 karakter" }),
+  bpdasId: z.number({ invalid_type_error: "Provinsi harus dipilih" }),
   totalTarget: z.number({ invalid_type_error: "Nilai harus berupa angka" }).min(0, "Nilai tidak valid"),
   totalRealisasi: z.number({ invalid_type_error: "Nilai harus berupa angka" }).min(0, "Nilai tidak valid"),
   totalT1: z.number({ invalid_type_error: "Nilai harus berupa angka" }).min(0, "Tahun tidak valid"),

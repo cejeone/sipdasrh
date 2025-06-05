@@ -13,19 +13,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
-import { deleteMonev } from "../lib/action";
+import { deleteMonevPusat } from "../lib/action";
 import { toast } from "sonner";
 
 interface Props {
   id: string;
-  mutateMonev: () => void;
+  mutateMonevPusat: () => void;
 }
 
-export default function Delete({ id, mutateMonev }: Props) {
+export default function Delete({ id, mutateMonevPusat }: Props) {
   const handleDelete = async () => {
     try {
-      await deleteMonev(id);
-      mutateMonev(); // Langsung panggil mutate
+      await deleteMonevPusat(id);
+      mutateMonevPusat(); // Langsung panggil mutate
       toast.success("Data berhasil dihapus");
     } catch (error) {
       console.error("Gagal menghapus dokumen:", error);

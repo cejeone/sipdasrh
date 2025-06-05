@@ -35,14 +35,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Monev, MonevResponse } from "@/model/rh/Monev";
+import { MonevPusat, MonevPusatResponse } from "@/model/rh/MonevPusat";
 import { ApiResponse } from "@/model/ApiResponse";
 import useSWR from "swr";
 import { fetcherPepdas } from "lib/fetcher";
-import { deleteMonev } from "./lib/action";
+import { deleteMonevPusat } from "./lib/action";
 import { toast } from "sonner";
 
-export default function MonevPage() {
+export default function MonevPusatPage() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [searchBy, setSearchBy] = useState<string | undefined>(undefined);
@@ -53,12 +53,12 @@ export default function MonevPage() {
     if (searchBy && searchValue) {
       params.set(searchBy, searchValue);
     }
-    return `/monev?${params.toString()}`;
+    return `/monevPusat?${params.toString()}`;
   }, [pageIndex, pageSize, searchBy, searchValue]);
 
-  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<MonevResponse>>(swrKey, fetcherPepdas);
+  const { data: currentData, isLoading, mutate } = useSWR<ApiResponse<MonevPusatResponse>>(swrKey, fetcherPepdas);
 
-  const monevList: Monev[] = currentData?._embedded?.monevList ?? [];
+  const monevPusatList: MonevPusat[] = currentData?._embedded?.monevPusatList ?? [];
   const totalPages = currentData?.page?.totalPages ?? 1;
   const totalElements = currentData?.page?.totalElements ?? 0;
 
@@ -66,7 +66,7 @@ export default function MonevPage() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
   const table = useReactTable({
-    data: monevList,
+    data: monevPusatList,
     columns,
     pageCount: totalPages,
     state: {
@@ -100,7 +100,7 @@ export default function MonevPage() {
   const handleDeleteSelected = async () => {
     try {
       const idsToDelete = selectedRows.map((row) => row.original.id);
-      await Promise.all(idsToDelete.map((id) => deleteMonev(id)));
+      await Promise.all(idsToDelete.map((id) => deleteMonevPusat(id)));
       await mutate();
       setSelectedRowIds({});
       toast.success("Data berhasil dihapus");
@@ -116,14 +116,14 @@ export default function MonevPage() {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <Breadcrumbs items={[{ label: "PEPDAS", href: "" }, { label: "Monev" }]} />
+              <Breadcrumbs items={[{ label: "Rencana Kerja RH", href: "" }, { label: "Monev Pusat" }]} />
               <div className="flex items-center gap-2 text-secondary-green">
                 <Link2 />
-                <h1 className="text-2xl font-bold ">Monev</h1>
+                <h1 className="text-2xl font-bold ">Monitoring & Evaluasi Program</h1>
               </div>
               <p className="text-sm text-base-gray">Informasi terkait data monev pusat</p>
             </div>
-            <Link href="monev/create">
+            <Link href="monev-pusat/create">
               <Button variant="green">
                 <Plus />
                 Tambah Data
